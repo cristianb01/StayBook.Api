@@ -1,4 +1,5 @@
 using MediatR;
+using StayBook.Application.Exceptions;
 using StayBook.Application.Features.Bookings.Commands;
 using StayBook.Application.Interfaces;
 using StayBook.Domain.Entities;
@@ -17,14 +18,14 @@ public class CreateBookingCommandHandler : IRequestHandler<CreateBookingCommand,
     
     public async Task<int> Handle(CreateBookingCommand request, CancellationToken cancellationToken)
     {
-        var booking = new Booking(request.UserId, request.PropertyId, new DateRange(request.StartDate, request.EndDate), 0);
-        
         var hasOverlap = await _bookingRepository.HasOverlapAsync(request.PropertyId, request.StartDate, request.EndDate, cancellationToken);
 
         if (hasOverlap)
         {
-            throw new InvalidOperationException("The property is already booked for the selected dates.");
+            throw new BookingOverlayException();
         }
+        
+        var booking = new Booking(request.UserId, request.PropertyId, new DateRange(request.StartDate, request.EndDate), 0);
         
         await _bookingRepository.AddAsync(booking, cancellationToken);
         return booking.Id;

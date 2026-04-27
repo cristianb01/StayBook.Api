@@ -2,6 +2,8 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using StayBook.Api.Models;
 using StayBook.Application.Features.Bookings.Commands;
+using StayBook.Application.Features.Bookings.Queries;
+using StayBook.Application.Models;
 
 namespace StayBook.Controllers;
 
@@ -27,8 +29,17 @@ public class BookingController : ControllerBase
             request.StartDate,
             request.EndDate);
 
-        // TODO: create custom Domain and Application exceptions and handle them here
         var bookingId = await _mediator.Send(command, cancellationToken);
         return CreatedAtAction(nameof(CreateBooking), new { id = bookingId }, bookingId);
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> GetAllBookings(
+        [FromQuery] PaginationFilters paginationFilters, 
+        CancellationToken cancellationToken)
+    {
+        var query = new GetAllBookingsQuery(paginationFilters);
+        var bookings = await _mediator.Send(query, cancellationToken);
+        return Ok(bookings);
     }
 }

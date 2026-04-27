@@ -1,13 +1,16 @@
 using Microsoft.EntityFrameworkCore;
 using StayBook.Application.Features.Bookings.Commands;
 using StayBook.Application.Interfaces;
+using StayBook.Application.Mappings;
 using StayBook.Infrastructure.Persistence;
 using StayBook.Infrastructure.Persistence.Repositories;
+using StayBook.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddOpenApi();
 builder.Services.AddControllers();
+builder.Services.AddAutoMapper(cfg => cfg.AddMaps(typeof(BookingMappingProfile).Assembly));
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseMySql(
@@ -25,6 +28,8 @@ if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
 }
+
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 app.UseHttpsRedirection();
 app.MapControllers();

@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using StayBook.Application.Interfaces;
+using StayBook.Application.Models;
 using StayBook.Domain.Entities;
 using StayBook.Domain.Enums;
 
@@ -28,5 +29,14 @@ public class BookingRepository : IBookingRepository
             && b.DateRange.StartDate < endDate
             && b.DateRange.EndDate > startDate,
             cancellationToken);
+    }
+
+    public Task<List<Booking>> GetAllAsync(PaginationFilters paginationFilters, CancellationToken cancellationToken)
+    {
+        return _dbContext.Bookings
+            .OrderByDescending(b => b.CreatedAt)
+            .Skip(paginationFilters.Skip)
+            .Take(paginationFilters.Take)
+            .ToListAsync(cancellationToken);
     }
 }
