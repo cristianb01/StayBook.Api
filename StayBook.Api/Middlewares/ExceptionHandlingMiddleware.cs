@@ -33,6 +33,8 @@ public class ExceptionHandlingMiddleware
         var (statusCode, message) = exception switch
         {
             BookingOverlayException => (HttpStatusCode.Conflict, exception.Message),
+            BookingNotFoundException => (HttpStatusCode.NotFound, exception.Message),
+            InvalidBookingStatusException => (HttpStatusCode.BadRequest, exception.Message),
             ArgumentException => (HttpStatusCode.BadRequest, exception.Message),
             _ => (HttpStatusCode.InternalServerError, "An unexpected error occurred")
         };

@@ -39,4 +39,15 @@ public class BookingRepository : IBookingRepository
             .Take(paginationFilters.Take)
             .ToListAsync(cancellationToken);
     }
+
+    public Task<Booking?> GetByIdAsync(int bookingId, CancellationToken cancellationToken)
+    {
+        return _dbContext.Bookings.FirstOrDefaultAsync(b => b.Id == bookingId, cancellationToken);
+    }
+
+    public async Task UpdateAsync(Booking booking, CancellationToken cancellationToken)
+    {
+        _dbContext.Bookings.Update(booking);
+        await _dbContext.SaveChangesAsync(cancellationToken);
+    }
 }
