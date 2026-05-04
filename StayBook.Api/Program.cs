@@ -4,6 +4,7 @@ using StayBook.Application.Interfaces;
 using StayBook.Application.Mappings;
 using StayBook.Infrastructure.Persistence;
 using StayBook.Infrastructure.Persistence.Repositories;
+using StayBook.Infrastructure.Persistence.UnitOfWork;
 using StayBook.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -20,6 +21,8 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(CreateBookingCommand).Assembly));
 
 builder.Services.AddScoped<IBookingRepository, BookingRepository>();
+builder.Services.AddScoped<IOutboxRepository, OutboxRepository>();
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 var app = builder.Build();
 
