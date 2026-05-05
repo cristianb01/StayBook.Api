@@ -1,9 +1,12 @@
+using StayBook.Domain.Bookings.Events;
+using StayBook.Domain.Common;
 using StayBook.Domain.Enums;
+using StayBook.Domain.Events;
 using StayBook.Domain.ValueObjects;
 
 namespace StayBook.Domain.Entities;
 
-public class Booking
+public class Booking : AggregateRoot
 {
     public int Id { get; private set; }
     public int UserId { get; private set; }
@@ -35,6 +38,8 @@ public class Booking
         }
         
         Status = BookingStatus.Confirmed;
+        
+        AddDomainEvent(new BookingConfirmedEvent(Id));
     }
 
     public void Cancel()

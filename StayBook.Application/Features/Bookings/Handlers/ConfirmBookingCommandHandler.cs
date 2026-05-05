@@ -10,13 +10,11 @@ namespace StayBook.Application.Features.Bookings.Handlers;
 public class ConfirmBookingCommandHandler : IRequestHandler<ConfirmBookingCommand, Unit>
 {
     private readonly IBookingRepository  _bookingRepository;
-    private readonly IOutboxRepository _outboxRepository;
     private readonly IUnitOfWork _unitOfWork;
     
-    public ConfirmBookingCommandHandler(IBookingRepository bookingRepository, IOutboxRepository outboxRepository, IUnitOfWork unitOfWork)
+    public ConfirmBookingCommandHandler(IBookingRepository bookingRepository, IUnitOfWork unitOfWork)
     {
         _bookingRepository = bookingRepository;
-        _outboxRepository = outboxRepository;
         _unitOfWork = unitOfWork;
     }
     
@@ -35,12 +33,6 @@ public class ConfirmBookingCommandHandler : IRequestHandler<ConfirmBookingComman
         }
 
         existingBooking.Confirm();
-        await _bookingRepository.UpdateAsync(existingBooking, cancellationToken);
-        
-        await _outboxRepository.AddAsync(new OutboxEvent(
-            "BookingConfirmed",
-            existingBooking.Id.ToString(),
-            DateTime.UtcNow), cancellationToken);
         
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
