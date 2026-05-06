@@ -36,6 +36,7 @@ public class ExceptionHandlingMiddleware
             BookingNotFoundException => (HttpStatusCode.NotFound, exception.Message),
             InvalidBookingStatusException => (HttpStatusCode.BadRequest, exception.Message),
             ArgumentException => (HttpStatusCode.BadRequest, exception.Message),
+            PaymentFailedException => (HttpStatusCode.PaymentRequired, exception.Message),
             _ => (HttpStatusCode.InternalServerError, "An unexpected error occurred")
         };
         

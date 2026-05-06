@@ -33,10 +33,10 @@ public class BookingController : ControllerBase
         return CreatedAtAction(nameof(CreateBooking), new { id = bookingId }, bookingId);
     }
 
-    [HttpPost("{id:int}/confirm")] // {id}/confirm
-    public async Task<IActionResult> ConfirmBooking(int id, CancellationToken cancellationToken)
+    [HttpPost("{id:int}/confirm")]
+    public async Task<IActionResult> ConfirmBooking(int id, ConfirmBookingRequest confirmBookingRequest ,CancellationToken cancellationToken)
     {
-        var command = new ConfirmBookingCommand(id);
+        var command = new ConfirmBookingCommand(id, confirmBookingRequest.PaymentReferenceId);
         
         await _mediator.Send(command, cancellationToken);
         

@@ -10,12 +10,14 @@ namespace StayBook.Application.Features.Bookings.Handlers;
 public class ConfirmBookingCommandHandler : IRequestHandler<ConfirmBookingCommand, Unit>
 {
     private readonly IBookingRepository  _bookingRepository;
+    private readonly IPaymentService _paymentService;
     private readonly IUnitOfWork _unitOfWork;
     
-    public ConfirmBookingCommandHandler(IBookingRepository bookingRepository, IUnitOfWork unitOfWork)
+    public ConfirmBookingCommandHandler(IBookingRepository bookingRepository, IUnitOfWork unitOfWork, IPaymentService paymentService)
     {
         _bookingRepository = bookingRepository;
         _unitOfWork = unitOfWork;
+        _paymentService = paymentService;
     }
     
     public async Task<Unit> Handle(ConfirmBookingCommand request, CancellationToken cancellationToken)
@@ -31,6 +33,10 @@ public class ConfirmBookingCommandHandler : IRequestHandler<ConfirmBookingComman
         {
             throw new InvalidBookingStatusException(request.BookingId, existingBooking.Status, BookingStatus.Pending);
         }
+        
+        var paymentResult = await _paymentService.VerifyAsync(request.PaymentReferenceId, cancellationToken);
+        
+        if (!paymentResult.IsSuccess) throw new PaymentFailedException();
 
         existingBooking.Confirm();
         
