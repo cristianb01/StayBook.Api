@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using StayBook.Application.Interfaces;
 using StayBook.Application.Models;
-using StayBook.Domain.Entities;
+using StayBook.Domain.Bookings;
 using StayBook.Domain.Enums;
 
 namespace StayBook.Infrastructure.Persistence.Repositories;

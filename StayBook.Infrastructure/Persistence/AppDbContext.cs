@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
+using StayBook.Domain.Bookings;
 using StayBook.Domain.Common;
-using StayBook.Domain.Entities;
+using StayBook.Domain.Properties;
 using StayBook.Infrastructure.Persistence.Outbox;
 
 namespace StayBook.Infrastructure.Persistence;
@@ -8,6 +9,7 @@ namespace StayBook.Infrastructure.Persistence;
 public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(options)
 {
     public DbSet<Booking> Bookings { get; set; }
+    public DbSet<Property> Properties { get; set; }
     public DbSet<OutboxMessage> OutboxMessages { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

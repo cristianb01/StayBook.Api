@@ -1,10 +1,9 @@
 using StayBook.Domain.Bookings.Events;
 using StayBook.Domain.Common;
 using StayBook.Domain.Enums;
-using StayBook.Domain.Events;
 using StayBook.Domain.ValueObjects;
 
-namespace StayBook.Domain.Entities;
+namespace StayBook.Domain.Bookings;
 
 public class Booking : AggregateRoot
 {

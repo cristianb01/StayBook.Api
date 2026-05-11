@@ -1,6 +1,6 @@
 using AutoMapper;
 using StayBook.Application.Features.Bookings.DTOs;
-using StayBook.Domain.Entities;
+using StayBook.Domain.Bookings;
 
 namespace StayBook.Application.Mappings;
 

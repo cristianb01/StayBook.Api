@@ -1,5 +1,5 @@
 using StayBook.Application.Models;
-using StayBook.Domain.Entities;
+using StayBook.Domain.Bookings;
 
 namespace StayBook.Application.Interfaces;
 

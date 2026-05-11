@@ -1,5 +1,4 @@
 using MediatR;
-using StayBook.Domain.Entities;
 
 namespace StayBook.Application.Features.Bookings.Commands;
 

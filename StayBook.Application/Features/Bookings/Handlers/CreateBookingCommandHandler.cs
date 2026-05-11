@@ -2,7 +2,7 @@ using MediatR;
 using StayBook.Application.Exceptions;
 using StayBook.Application.Features.Bookings.Commands;
 using StayBook.Application.Interfaces;
-using StayBook.Domain.Entities;
+using StayBook.Domain.Bookings;
 using StayBook.Domain.ValueObjects;
 
 namespace StayBook.Application.Features.Bookings.Handlers;
