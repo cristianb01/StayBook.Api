@@ -29,6 +29,11 @@ public class ConfirmBookingCommandHandler : IRequestHandler<ConfirmBookingComman
             throw new BookingNotFoundException(request.BookingId);
         }
 
+        if (existingBooking.Status == BookingStatus.Confirmed)
+        {
+            return Unit.Value;
+        }
+        
         if (existingBooking.Status != BookingStatus.Pending)
         {
             throw new InvalidBookingStatusException(request.BookingId, existingBooking.Status, BookingStatus.Pending);

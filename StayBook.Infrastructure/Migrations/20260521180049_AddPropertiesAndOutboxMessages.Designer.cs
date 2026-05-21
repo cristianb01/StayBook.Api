@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using StayBook.Infrastructure.Persistence;
 
@@ -11,9 +12,11 @@ using StayBook.Infrastructure.Persistence;
 namespace StayBook.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260521180049_AddPropertiesAndOutboxMessages")]
+    partial class AddPropertiesAndOutboxMessages
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -75,43 +78,6 @@ namespace StayBook.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Properties");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Description = "A beautiful villa with ocean views.",
-                            HostId = 1,
-                            Name = "Seaside Villa"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Description = "Cozy cabin surrounded by pine trees.",
-                            HostId = 1,
-                            Name = "Mountain Cabin"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Description = "Modern loft in the heart of downtown.",
-                            HostId = 2,
-                            Name = "City Loft"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Description = "Quiet cottage in the countryside.",
-                            HostId = 2,
-                            Name = "Country Cottage"
-                        },
-                        new
-                        {
-                            Id = 5,
-                            Description = "Relaxing retreat by the lake.",
-                            HostId = 3,
-                            Name = "Lakehouse Retreat"
-                        });
                 });
 
             modelBuilder.Entity("StayBook.Infrastructure.Persistence.Outbox.OutboxMessage", b =>
