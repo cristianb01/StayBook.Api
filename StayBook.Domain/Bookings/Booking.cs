@@ -13,6 +13,7 @@ public class Booking : AggregateRoot
     public BookingStatus Status { get; private set; }
     public DateRange DateRange { get; private set; }
     public decimal TotalPrice { get; private set; }
+    public string? PaymentReferenceId { get; private set; }
     public DateTime CreatedAt { get; private set; }
     public DateTime ExpiresAt { get; private set; }
 
@@ -29,7 +30,7 @@ public class Booking : AggregateRoot
         CreatedAt = DateTime.UtcNow;
     }
 
-    public void Confirm()
+    public void Confirm(string paymentReferenceId)
     {
         if (Status != BookingStatus.Pending)
         {
@@ -37,6 +38,7 @@ public class Booking : AggregateRoot
         }
         
         Status = BookingStatus.Confirmed;
+        PaymentReferenceId = paymentReferenceId;
         
         AddDomainEvent(new BookingConfirmedEvent(Id));
     }

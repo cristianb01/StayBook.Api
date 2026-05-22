@@ -43,7 +43,7 @@ public class ConfirmBookingCommandHandler : IRequestHandler<ConfirmBookingComman
         
         if (!paymentResult.IsSuccess) throw new PaymentFailedException();
 
-        existingBooking.Confirm();
+        existingBooking.Confirm(request.PaymentReferenceId);
         
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 

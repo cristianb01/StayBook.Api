@@ -36,6 +36,9 @@ namespace StayBook.Infrastructure.Migrations
                     b.Property<DateTime>("ExpiresAt")
                         .HasColumnType("datetime(6)");
 
+                    b.Property<string>("PaymentReferenceId")
+                        .HasColumnType("longtext");
+
                     b.Property<int>("PropertyId")
                         .HasColumnType("int");
 
