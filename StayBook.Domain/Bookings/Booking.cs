@@ -15,6 +15,7 @@ public class Booking : AggregateRoot
     public decimal TotalPrice { get; private set; }
     public string? PaymentReferenceId { get; private set; }
     public DateTime CreatedAt { get; private set; }
+    // TODO: Initialize ExpiresAt when a booking is created.
     public DateTime ExpiresAt { get; private set; }
 
     // Required by EF Core

@@ -22,6 +22,7 @@ public class ConfirmBookingCommandHandler : IRequestHandler<ConfirmBookingComman
     
     public async Task<Unit> Handle(ConfirmBookingCommand request, CancellationToken cancellationToken)
     {
+        // TODO: Lock the property row in the database before confirming the booking.
         var existingBooking = await _bookingRepository.GetByIdAsync(request.BookingId, cancellationToken);
 
         if (existingBooking == null)

@@ -18,10 +18,11 @@ public class CreateBookingCommandHandler : IRequestHandler<CreateBookingCommand,
     
     public async Task<int> Handle(CreateBookingCommand request, CancellationToken cancellationToken)
     {
+        // TODO: Lock the property row in the database while checking availability and creating the booking.
         var hasOverlap = await _bookingRepository.HasOverlapAsync(request.PropertyId, request.StartDate, request.EndDate, cancellationToken);
 
         if (hasOverlap)
-        {
+        { 
             throw new BookingOverlayException();
         }
         
