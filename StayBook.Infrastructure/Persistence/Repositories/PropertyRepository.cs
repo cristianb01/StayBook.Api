@@ -24,4 +24,9 @@ public class PropertyRepository : IPropertyRepository
                 && b.DateRange.EndDate > startDate))
             .ToListAsync(cancellationToken);
     }
+
+    public Task<Property?> GetByIdAsync(int requestPropertyId, CancellationToken cancellationToken)
+    {
+        return _context.Properties.FirstOrDefaultAsync(p => p.Id == requestPropertyId, cancellationToken);
+    }
 }

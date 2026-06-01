@@ -22,6 +22,7 @@ public class ConfirmBookingCommandHandler : IRequestHandler<ConfirmBookingComman
     
     public async Task<Unit> Handle(ConfirmBookingCommand request, CancellationToken cancellationToken)
     {
+        // TODO: Lock the property row in the database before confirming the booking.
         var existingBooking = await _bookingRepository.GetByIdAsync(request.BookingId, cancellationToken);
 
         if (existingBooking == null)
@@ -29,6 +30,11 @@ public class ConfirmBookingCommandHandler : IRequestHandler<ConfirmBookingComman
             throw new BookingNotFoundException(request.BookingId);
         }
 
+        if (existingBooking.Status == BookingStatus.Confirmed)
+        {
+            return Unit.Value;
+        }
+        
         if (existingBooking.Status != BookingStatus.Pending)
         {
             throw new InvalidBookingStatusException(request.BookingId, existingBooking.Status, BookingStatus.Pending);
@@ -38,7 +44,7 @@ public class ConfirmBookingCommandHandler : IRequestHandler<ConfirmBookingComman
         
         if (!paymentResult.IsSuccess) throw new PaymentFailedException();
 
-        existingBooking.Confirm();
+        existingBooking.Confirm(request.PaymentReferenceId);
         
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 

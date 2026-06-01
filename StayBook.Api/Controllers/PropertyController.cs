@@ -26,4 +26,12 @@ public class PropertyController : ControllerBase
         var properties = await _mediator.Send(query, cancellationToken);
         return Ok(properties);
     }
+
+    [HttpGet("{propertyId:int}")]
+    public async Task<IActionResult> GetPropertyById(int propertyId, CancellationToken cancellationToken)
+    {
+        var query = new GetPropertyByIdQuery(propertyId);
+        var property = await _mediator.Send(query, cancellationToken);
+        return Ok(property);
+    }
 }
