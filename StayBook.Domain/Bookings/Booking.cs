@@ -27,6 +27,7 @@ public class Booking : AggregateRoot
         Status = BookingStatus.Pending;
         TotalPrice = totalPrice;
         CreatedAt = DateTime.UtcNow;
+        ExpiresAt = CreatedAt.AddMinutes(10);
     }
 
     public void Confirm()

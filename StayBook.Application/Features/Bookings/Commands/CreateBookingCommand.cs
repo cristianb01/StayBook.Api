@@ -1,4 +1,4 @@
-using MediatR;
+using StayBook.Application.Interfaces;
 
 namespace StayBook.Application.Features.Bookings.Commands;
 
@@ -6,4 +6,4 @@ public record CreateBookingCommand(
     int UserId,
     int PropertyId,
     DateTime StartDate,
-    DateTime EndDate) : IRequest<int>;
+    DateTime EndDate) : ICommand<int>;

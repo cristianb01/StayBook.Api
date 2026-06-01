@@ -10,24 +10,33 @@ namespace StayBook.Application.Features.Bookings.Handlers;
 public class CreateBookingCommandHandler : IRequestHandler<CreateBookingCommand, int>
 {
     private readonly IBookingRepository _bookingRepository;
+    private readonly IMySqlPropertyLock _lock;
 
-    public CreateBookingCommandHandler(IBookingRepository bookingRepository)
+    public CreateBookingCommandHandler(IBookingRepository bookingRepository, IMySqlPropertyLock @lock)
     {
         _bookingRepository = bookingRepository;
+        _lock = @lock;
     }
     
     public async Task<int> Handle(CreateBookingCommand request, CancellationToken cancellationToken)
     {
-        var hasOverlap = await _bookingRepository.HasOverlapAsync(request.PropertyId, request.StartDate, request.EndDate, cancellationToken);
+        await _lock.ExecuteAsync(request.PropertyId, cancellationToken);
+        
+        await Task.Delay(TimeSpan.FromSeconds(10), cancellationToken);
+
+        var hasOverlap = await _bookingRepository.HasOverlapAsync(request.PropertyId, request.StartDate,
+            request.EndDate, cancellationToken);
 
         if (hasOverlap)
         {
             throw new BookingOverlayException();
         }
-        
-        var booking = new Booking(request.UserId, request.PropertyId, new DateRange(request.StartDate, request.EndDate), 0);
-        
+
+        var booking = new Booking(request.UserId, request.PropertyId,
+            new DateRange(request.StartDate, request.EndDate), 0);
+
         await _bookingRepository.AddAsync(booking, cancellationToken);
+
         return booking.Id;
     }
 }

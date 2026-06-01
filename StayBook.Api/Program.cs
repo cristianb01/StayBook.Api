@@ -25,6 +25,7 @@ builder.Services.AddScoped<IBookingRepository, BookingRepository>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IPropertyRepository, PropertyRepository>();
 builder.Services.AddScoped<IPaymentService, FakePaymentService>();
+builder.Services.AddScoped<IMySqlPropertyLock, MySqlPropertyLock>();
 
 var app = builder.Build();
 
