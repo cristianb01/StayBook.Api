@@ -10,4 +10,5 @@ public record BookingDto(
     DateTime StartDate,
     DateTime EndDate,
     decimal TotalPrice,
-    DateTime CreatedAt);
+    DateTime CreatedAt,
+    DateTime ExpiresAt);

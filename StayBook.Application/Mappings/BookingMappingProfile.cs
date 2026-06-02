@@ -17,6 +17,7 @@ public class BookingMappingProfile : Profile
                 src.DateRange.StartDate,
                 src.DateRange.EndDate,
                 src.TotalPrice,
-                src.CreatedAt));
+                src.CreatedAt,
+                src.ExpiresAt));
     }
 }

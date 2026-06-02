@@ -12,42 +12,24 @@ namespace StayBook.Infrastructure.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.CreateTable(
-                name: "OutboxMessages",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    Type = table.Column<string>(type: "longtext", nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    Payload = table.Column<string>(type: "longtext", nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    OccurredOn = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    ProcessedOn = table.Column<DateTime>(type: "datetime(6)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_OutboxMessages", x => x.Id);
-                })
-                .Annotation("MySql:CharSet", "utf8mb4");
+            migrationBuilder.Sql(@"
+                CREATE TABLE IF NOT EXISTS `OutboxMessages` (
+                    `Id` int NOT NULL AUTO_INCREMENT,
+                    `Type` longtext CHARACTER SET utf8mb4 NOT NULL,
+                    `Payload` longtext CHARACTER SET utf8mb4 NOT NULL,
+                    `OccurredOn` datetime(6) NOT NULL,
+                    `ProcessedOn` datetime(6) NULL,
+                    CONSTRAINT `PK_OutboxMessages` PRIMARY KEY (`Id`)
+                ) CHARACTER SET=utf8mb4;");
 
-            migrationBuilder.CreateTable(
-                name: "Properties",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    HostId = table.Column<int>(type: "int", nullable: false),
-                    Name = table.Column<string>(type: "longtext", nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    Description = table.Column<string>(type: "longtext", nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4")
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Properties", x => x.Id);
-                })
-                .Annotation("MySql:CharSet", "utf8mb4");
+            migrationBuilder.Sql(@"
+                CREATE TABLE IF NOT EXISTS `Properties` (
+                    `Id` int NOT NULL AUTO_INCREMENT,
+                    `HostId` int NOT NULL,
+                    `Name` longtext CHARACTER SET utf8mb4 NOT NULL,
+                    `Description` longtext CHARACTER SET utf8mb4 NOT NULL,
+                    CONSTRAINT `PK_Properties` PRIMARY KEY (`Id`)
+                ) CHARACTER SET=utf8mb4;");
         }
 
         /// <inheritdoc />

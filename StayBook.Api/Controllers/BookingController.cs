@@ -19,9 +19,7 @@ public class BookingController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> CreateBooking(
-        [FromBody] CreateBookingRequest request,
-        CancellationToken cancellationToken)
+    public async Task<IActionResult> CreateBooking([FromBody] CreateBookingRequest request, CancellationToken cancellationToken)
     {
         var command = new CreateBookingCommand(
             request.UserId,
@@ -34,7 +32,7 @@ public class BookingController : ControllerBase
     }
 
     [HttpPost("{id:int}/confirm")]
-    public async Task<IActionResult> ConfirmBooking(int id, ConfirmBookingRequest confirmBookingRequest ,CancellationToken cancellationToken)
+    public async Task<IActionResult> ConfirmBooking(int id, ConfirmBookingRequest confirmBookingRequest, CancellationToken cancellationToken)
     {
         var command = new ConfirmBookingCommand(id, confirmBookingRequest.PaymentReferenceId);
         
@@ -51,5 +49,13 @@ public class BookingController : ControllerBase
         var query = new GetAllBookingsQuery(paginationFilters);
         var bookings = await _mediator.Send(query, cancellationToken);
         return Ok(bookings);
+    }
+
+    [HttpGet("{id:int}")]
+    public async Task<IActionResult> GetBooking([FromRoute] int id, CancellationToken cancellationToken)
+    {
+        var query = new GetBookingByIdQuery(id);
+        var booking = await _mediator.Send(query, cancellationToken);
+        return Ok(booking);
     }
 }

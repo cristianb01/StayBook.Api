@@ -19,7 +19,7 @@ public class PropertyRepository : IPropertyRepository
         return _context.Properties
             .Where (p => !_context.Bookings.Any(b => 
                 b.PropertyId == p.Id
-                && (b.Status == BookingStatus.Pending || b.Status == BookingStatus.Confirmed)
+                && ((b.Status == BookingStatus.Pending && b.ExpiresAt <= DateTime.Now) || b.Status == BookingStatus.Confirmed)
                 && b.DateRange.StartDate < endDate 
                 && b.DateRange.EndDate > startDate))
             .ToListAsync(cancellationToken);

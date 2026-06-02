@@ -65,5 +65,5 @@ public class Booking : AggregateRoot
         Status = BookingStatus.Expired;
     }
     
-    public bool IsActive() => Status == BookingStatus.Pending || Status == BookingStatus.Confirmed;
+    public bool IsExpired() => Status == BookingStatus.Pending && ExpiresAt < DateTime.UtcNow;
 }

@@ -21,23 +21,14 @@ namespace StayBook.Infrastructure.Migrations
                     CONSTRAINT `PK_OutboxMessages` PRIMARY KEY (`Id`)
                 ) CHARACTER SET=utf8mb4;");
 
-            migrationBuilder.CreateTable(
-                name: "Properties",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    HostId = table.Column<int>(type: "int", nullable: false),
-                    Name = table.Column<string>(type: "longtext", nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    Description = table.Column<string>(type: "longtext", nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4")
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Properties", x => x.Id);
-                })
-                .Annotation("MySql:CharSet", "utf8mb4");
+            migrationBuilder.Sql(@"
+                CREATE TABLE IF NOT EXISTS `Properties` (
+                    `Id` int NOT NULL AUTO_INCREMENT,
+                    `HostId` int NOT NULL,
+                    `Name` longtext NOT NULL,
+                    `Description` longtext NOT NULL,
+                    CONSTRAINT `PK_Properties` PRIMARY KEY (`Id`)
+                ) CHARACTER SET=utf8mb4;");
         }
 
         /// <inheritdoc />
