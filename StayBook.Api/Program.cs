@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using StayBook.Application.Features.Bookings.Commands;
 using StayBook.Application.Interfaces;
 using StayBook.Application.Mappings;
+using StayBook.Infrastructure.Helpers;
 using StayBook.Infrastructure.Persistence;
 using StayBook.Infrastructure.Persistence.Repositories;
 using StayBook.Infrastructure.Persistence.UnitOfWork;
@@ -28,6 +29,8 @@ builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IPropertyRepository, PropertyRepository>();
 builder.Services.AddScoped<IPaymentService, FakePaymentService>();
 builder.Services.AddScoped<IMySqlPropertyLock, MySqlPropertyLock>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
 
 builder.Services.AddCors(options =>
     options.AddPolicy("AllowAngularApp", policy =>
