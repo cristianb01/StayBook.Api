@@ -1,8 +1,9 @@
 using StayBook.Domain.Users;
+using StayBook.Infrastructure.Models;
 
 namespace StayBook.Application.Interfaces;
 
 public interface IJwtProvider
 {
-    string GenerateJwtToken(User user);
+    TokenResponse GenerateJwtToken(User user);
 }

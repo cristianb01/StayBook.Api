@@ -34,7 +34,7 @@ public class LoginUserCommandHandler : IRequestHandler<LoginCommand, LoginRespon
             throw new InvalidPasswordException();
         }
         
-        var jwt = _jwtProvider.GenerateJwtToken(user);
-        return new LoginResponse (jwt, new DateTime(DateTime.UtcNow.Ticks + TimeSpan.FromHours(1).Ticks));
+        var tokenResponse = _jwtProvider.GenerateJwtToken(user);
+        return new LoginResponse(tokenResponse.AccessToken, tokenResponse.ExpiresAtUtc);
     }
 }

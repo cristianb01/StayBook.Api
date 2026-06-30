@@ -19,7 +19,7 @@ public class JwtProvider : IJwtProvider
         _jwtOptions = jwtOptions.Value;
     }
     
-    public string GenerateJwtToken(User user)
+    public TokenResponse GenerateJwtToken(User user)
     {
         var claims = new[]
         {
@@ -32,13 +32,17 @@ public class JwtProvider : IJwtProvider
                 Encoding.UTF8.GetBytes(_jwtOptions.Key)),
             SecurityAlgorithms.HmacSha256);
 
+        var expiresAtUtc = DateTime.UtcNow.AddHours(1);
+        
         var token = new JwtSecurityToken(
             issuer: _jwtOptions.Issuer,
             audience: _jwtOptions.Audience,
             claims: claims,
-            expires: DateTime.UtcNow.AddHours(1),
+            expires: expiresAtUtc,
             signingCredentials: signingCredentials);
 
-        return new JwtSecurityTokenHandler().WriteToken(token);
+        return new TokenResponse(
+            AccessToken: new JwtSecurityTokenHandler().WriteToken(token),
+            ExpiresAtUtc: expiresAtUtc);
     }
 }

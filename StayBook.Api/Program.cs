@@ -2,7 +2,9 @@ using Microsoft.EntityFrameworkCore;
 using StayBook.Application.Features.Bookings.Commands;
 using StayBook.Application.Interfaces;
 using StayBook.Application.Mappings;
+using StayBook.Extensions;
 using StayBook.Infrastructure.Helpers;
+using StayBook.Infrastructure.Models;
 using StayBook.Infrastructure.Persistence;
 using StayBook.Infrastructure.Persistence.Repositories;
 using StayBook.Infrastructure.Persistence.UnitOfWork;
@@ -24,13 +26,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(CreateBookingCommand).Assembly));
 
-builder.Services.AddScoped<IBookingRepository, BookingRepository>();
-builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-builder.Services.AddScoped<IPropertyRepository, PropertyRepository>();
-builder.Services.AddScoped<IPaymentService, FakePaymentService>();
-builder.Services.AddScoped<IMySqlPropertyLock, MySqlPropertyLock>();
-builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
+builder.Services.AddApplicationServices();
 
 builder.Services.AddCors(options =>
     options.AddPolicy("AllowAngularApp", policy =>
@@ -41,21 +37,7 @@ builder.Services.AddCors(options =>
             .AllowCredentials();
     }));
 
-builder.Services.AddAuthentication("Bearer")
-    .AddJwtBearer("Bearer", options =>
-    {
-        options.Audience = builder.Configuration["Jwt:Audience"];
-        options.RequireHttpsMetadata = false;
-        options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
-        {
-            ValidateIssuer = true,
-            ValidateAudience = true,
-            ValidateLifetime = true,
-            ValidateIssuerSigningKey = true,
-            ValidAudience = builder.Configuration["Jwt:Audience"],
-            IssuerSigningKey = new Microsoft.IdentityModel.Tokens.SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(builder.Configuration["Jwt:SecretKey"]))
-        };
-    });
+builder.Services.ConfigureJwt(builder);
 
 var app = builder.Build();
 
