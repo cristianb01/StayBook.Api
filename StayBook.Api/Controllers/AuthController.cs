@@ -22,7 +22,16 @@ public class AuthController : ControllerBase
     public async Task<IActionResult> Register([FromBody] RegisterUserRequest request)
     {
         var command = new RegisterCommand(request.Email, request.Password, request.UserName, request.Role);
-        var response = await  _mediator.Send(command);
+        var response = await _mediator.Send(command);
+        return Ok(response);
+    }
+
+    [HttpPost]
+    [AllowAnonymous]
+    public async Task<IActionResult> Login([FromBody] LoginUserRequest request)
+    {
+        var command = new LoginCommand(request.Email, request.Password);
+        var response = await _mediator.Send(command);
         return Ok(response);
     }
 }

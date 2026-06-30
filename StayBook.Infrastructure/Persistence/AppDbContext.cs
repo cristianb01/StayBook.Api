@@ -29,6 +29,10 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             new { Id = 4, HostId = 2, Name = "Country Cottage", Description = "Quiet cottage in the countryside." },
             new { Id = 5, HostId = 3, Name = "Lakehouse Retreat", Description = "Relaxing retreat by the lake." }
         );
+        
+        modelBuilder.Entity<User>()
+            .HasIndex(u => u.Email)
+            .IsUnique();
     }
 
     public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)

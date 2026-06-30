@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using StayBook.Application.Interfaces;
 using StayBook.Domain.Users;
 
@@ -17,5 +18,10 @@ public class UserRepository : IUserRepository
         var addedUser = (await _dbContext.Users.AddAsync(user, cancellationToken)).Entity;
         await _dbContext.SaveChangesAsync(cancellationToken);
         return addedUser;
+    }
+
+    public Task<User?> FindByEmail(string email, CancellationToken cancellationToken)
+    {
+        return _dbContext.Users.FirstOrDefaultAsync(u => u.Email == email, cancellationToken);
     }
 }
