@@ -38,8 +38,8 @@ public class ExceptionHandlingMiddleware
             ArgumentException => (HttpStatusCode.BadRequest, exception.Message),
             PaymentFailedException => (HttpStatusCode.PaymentRequired, exception.Message),
             KeyNotFoundException => (HttpStatusCode.NotFound, exception.Message),
-            UserNotFoundException => (HttpStatusCode.NotFound, exception.Message),
-            InvalidPasswordException => (HttpStatusCode.Unauthorized, exception.Message),
+            UserNotFoundException => (HttpStatusCode.BadRequest, exception.Message),
+            InvalidPasswordException => (HttpStatusCode.BadRequest, exception.Message),
             _ => (HttpStatusCode.InternalServerError, "An unexpected error occurred")
         };
         
