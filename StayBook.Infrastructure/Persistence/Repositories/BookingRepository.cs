@@ -37,6 +37,7 @@ public class BookingRepository : IBookingRepository
             .OrderByDescending(b => b.CreatedAt)
             .Skip(paginationFilters.Skip)
             .Take(paginationFilters.Take)
+            .AsNoTracking()
             .ToListAsync(cancellationToken);
     }
 

@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using StayBook.Domain.Bookings;
 using StayBook.Domain.Common;
+using StayBook.Domain.Conversations;
 using StayBook.Domain.Properties;
 using StayBook.Domain.Users;
 using StayBook.Infrastructure.Persistence.Outbox;
@@ -13,6 +14,8 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<Property> Properties { get; set; }
     public DbSet<OutboxMessage> OutboxMessages { get; set; }
     public DbSet<User> Users { get; set; }
+    public DbSet<Conversation> Conversations { get; set; }
+    public DbSet<Message> Messages { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -33,6 +36,26 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
         modelBuilder.Entity<User>()
             .HasIndex(u => u.Email)
             .IsUnique();
+
+        modelBuilder.Entity<Message>(entity =>
+        {
+            entity.Property(m => m.Content)
+                .IsRequired()
+                .HasMaxLength(2000);
+
+            entity.Property(m => m.CreatedAt)
+                .IsRequired();
+            
+            entity.HasOne<Conversation>()
+                .WithMany()
+                .HasForeignKey(u => u.ConversationId)
+                .OnDelete(DeleteBehavior.Cascade);
+            
+            entity.HasOne<User>()
+                .WithMany()
+                .HasForeignKey(m => m.SenderId)
+                .OnDelete(DeleteBehavior.Restrict);
+        });
     }
 
     public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
