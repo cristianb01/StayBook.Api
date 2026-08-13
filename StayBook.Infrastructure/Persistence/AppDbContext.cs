@@ -55,11 +55,6 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             entity.Property(m => m.CreatedAt)
                 .IsRequired();
             
-            entity.HasOne<Conversation>()
-                .WithMany()
-                .HasForeignKey(u => u.ConversationId)
-                .OnDelete(DeleteBehavior.Cascade);
-            
             entity.HasOne<User>()
                 .WithMany()
                 .HasForeignKey(m => m.SenderId)
@@ -68,20 +63,37 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
 
         modelBuilder.Entity<Conversation>(entity =>
         {
-            entity.HasOne<Property>()
+            entity.HasOne<Booking>()
                 .WithMany()
-                .HasForeignKey(c => c.PropertyId)
+                .HasForeignKey(c => c.BookingId)
                 .OnDelete(DeleteBehavior.Restrict);
             
-            entity.HasOne<User>()
-                .WithMany()
-                .HasForeignKey(c => c.OwnerId)
+            entity.HasMany(c => c.Messages)
+                .WithOne()
+                .HasForeignKey(m => m.ConversationId)
                 .OnDelete(DeleteBehavior.Cascade);
             
-            entity.HasOne<User>()
-                .WithMany()
-                .HasForeignKey(c => c.GuestId)
-                .OnDelete(DeleteBehavior.Cascade);
+            entity.Navigation<Message>(c => c.Messages)
+                .UsePropertyAccessMode(PropertyAccessMode.Field);
+            
+            // entity.HasOne<User>()
+            //     .WithMany()
+            //     .HasForeignKey(c => c.OwnerId)
+            //     .OnDelete(DeleteBehavior.Cascade);
+            //
+            // entity.HasOne<User>()
+            //     .WithMany()
+            //     .HasForeignKey(c => c.GuestId)
+            //     .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<Booking>(entity =>
+        {
+            entity.HasOne<Conversation>()
+                .WithOne()
+                .HasForeignKey<Conversation>(c => c.BookingId)
+                .IsRequired()
+                .OnDelete(DeleteBehavior.Restrict);
         });
     }
 

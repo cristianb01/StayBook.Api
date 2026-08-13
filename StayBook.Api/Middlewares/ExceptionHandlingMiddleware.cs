@@ -40,6 +40,7 @@ public class ExceptionHandlingMiddleware
             KeyNotFoundException => (HttpStatusCode.NotFound, exception.Message),
             UserNotFoundException => (HttpStatusCode.BadRequest, exception.Message),
             InvalidPasswordException => (HttpStatusCode.BadRequest, exception.Message),
+            InvalidOperationException => (HttpStatusCode.BadRequest, exception.Message),
             _ => (HttpStatusCode.InternalServerError, "An unexpected error occurred")
         };
         

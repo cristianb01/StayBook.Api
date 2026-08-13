@@ -1,5 +1,6 @@
 using StayBook.Domain.Bookings.Events;
 using StayBook.Domain.Common;
+using StayBook.Domain.Conversations;
 using StayBook.Domain.Enums;
 using StayBook.Domain.ValueObjects;
 
@@ -16,6 +17,7 @@ public class Booking : AggregateRoot
     public string? PaymentReferenceId { get; private set; }
     public DateTime CreatedAt { get; private set; }
     public DateTime ExpiresAt { get; private set; }
+    public Conversation? Conversation { get; private set; }
     public bool IsExpired() => Status == BookingStatus.Pending && ExpiresAt < DateTime.UtcNow;
     
 
@@ -64,5 +66,22 @@ public class Booking : AggregateRoot
         }
         
         Status = BookingStatus.Expired;
+    }
+
+    public Conversation StartConversation()
+    {
+        if (Status is BookingStatus.Expired or BookingStatus.Cancelled)
+        {
+            throw new InvalidOperationException("A conversation that is either expired, or Cancelled cannot start a conversation.");
+        }
+
+        if (Conversation is not null)
+        {
+            throw new InvalidOperationException("A conversation already exists.");
+        }
+
+        Conversation = new Conversation(Id);
+
+        return Conversation;
     }
 }

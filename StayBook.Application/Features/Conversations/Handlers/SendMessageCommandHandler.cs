@@ -1,12 +1,32 @@
 using MediatR;
+using StayBook.Application.Exceptions;
 using StayBook.Application.Features.Messages.Commands;
+using StayBook.Application.Interfaces;
+using StayBook.Domain.Conversations;
 
 namespace StayBook.Application.Features.Conversations.Handlers;
 
 public class SendMessageCommandHandler : IRequestHandler<SendMessageCommand, Unit>
 {
-    public Task<Unit> Handle(SendMessageCommand request, CancellationToken cancellationToken)
+    private readonly IBookingRepository _bookingRepository;
+
+    public SendMessageCommandHandler(IBookingRepository bookingRepository)
     {
-        throw new NotImplementedException();
+        _bookingRepository = bookingRepository;
+    }
+
+    public async Task<Unit> Handle(SendMessageCommand request, CancellationToken cancellationToken)
+    {
+        var booking = await _bookingRepository.GetByIdAsync(request.BookingId, cancellationToken);
+
+        if (booking is null)
+            throw new BookingNotFoundException(request.BookingId);
+
+        var conversation = booking.Conversation ?? booking.StartConversation(); 
+
+        conversation.AddMessage(request.SenderId, request.Content);
+        
+        await _bookingRepository.UpdateAsync(booking, cancellationToken);
+        return Unit.Value;
     }
 }
