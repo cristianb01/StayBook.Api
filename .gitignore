@@ -1,5 +1,13 @@
+## Build artifacts
 bin/
 obj/
 /packages/
+
+## JetBrains Rider / ReSharper
+.idea/
+*.iml
 riderModule.iml
 /_ReSharper.Caches/
+
+## JetBrains solution settings
+*.sln.DotSettings.user

@@ -15,8 +15,9 @@ public class Booking : AggregateRoot
     public decimal TotalPrice { get; private set; }
     public string? PaymentReferenceId { get; private set; }
     public DateTime CreatedAt { get; private set; }
-    // TODO: Initialize ExpiresAt when a booking is created.
     public DateTime ExpiresAt { get; private set; }
+    public bool IsExpired() => Status == BookingStatus.Pending && ExpiresAt < DateTime.UtcNow;
+    
 
     // Required by EF Core
     private Booking() { }
@@ -64,6 +65,4 @@ public class Booking : AggregateRoot
         
         Status = BookingStatus.Expired;
     }
-    
-    public bool IsExpired() => Status == BookingStatus.Pending && ExpiresAt < DateTime.UtcNow;
 }
