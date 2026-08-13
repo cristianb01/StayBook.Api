@@ -37,6 +37,15 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             .HasIndex(u => u.Email)
             .IsUnique();
 
+        modelBuilder.Entity<Property>(entity =>
+        {
+            entity.HasOne<User>()
+                .WithMany()
+                .HasForeignKey(p => p.HostId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+            
+
         modelBuilder.Entity<Message>(entity =>
         {
             entity.Property(m => m.Content)
@@ -55,6 +64,24 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
                 .WithMany()
                 .HasForeignKey(m => m.SenderId)
                 .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<Conversation>(entity =>
+        {
+            entity.HasOne<Property>()
+                .WithMany()
+                .HasForeignKey(c => c.PropertyId)
+                .OnDelete(DeleteBehavior.Restrict);
+            
+            entity.HasOne<User>()
+                .WithMany()
+                .HasForeignKey(c => c.OwnerId)
+                .OnDelete(DeleteBehavior.Cascade);
+            
+            entity.HasOne<User>()
+                .WithMany()
+                .HasForeignKey(c => c.GuestId)
+                .OnDelete(DeleteBehavior.Cascade);
         });
     }
 

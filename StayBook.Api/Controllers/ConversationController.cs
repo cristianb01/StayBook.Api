@@ -10,17 +10,20 @@ namespace StayBook.Controllers;
 [ApiController]
 [Authorize]
 [Route("api/[controller]")]
-public class MessagesController : ControllerBase
+public class ConversationController : ControllerBase
 {
     private readonly IMediator _mediator;
 
-    public MessagesController(IMediator mediator)
+    public ConversationController(IMediator mediator)
     {
         _mediator = mediator;
     }
 
     [HttpPost("{bookingId:int}")]
-    public async Task<IActionResult> Create([FromRoute] int bookingId, [FromBody] SendMessageRequest request ,CancellationToken cancellationToken)
+    public async Task<IActionResult> Create(
+        [FromRoute] int bookingId, 
+        [FromBody] SendMessageRequest request, 
+        CancellationToken cancellationToken)
     {
         if (!TryGetCurrentUserId(out var senderId))
         {

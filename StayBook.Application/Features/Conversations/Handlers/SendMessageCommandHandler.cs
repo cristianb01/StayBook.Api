@@ -1,7 +1,7 @@
 using MediatR;
 using StayBook.Application.Features.Messages.Commands;
 
-namespace StayBook.Application.Features.Messages;
+namespace StayBook.Application.Features.Conversations.Handlers;
 
 public class SendMessageCommandHandler : IRequestHandler<SendMessageCommand, Unit>
 {
