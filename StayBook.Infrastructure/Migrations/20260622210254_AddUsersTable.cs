@@ -30,11 +30,36 @@ namespace StayBook.Infrastructure.Migrations
                     table.PrimaryKey("PK_Users", x => x.Id);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.InsertData(
+                table: "Users",
+                columns: new[] { "Id", "UserName", "PasswordHash", "Email", "Role" },
+                values: new object[,]
+                {
+                    { 1, "host-alice", "$2a$11$MpFpbSFLtd5hKUoiTrSWsep.NlFQ6jVYcFX1pSnJ5SZMJPMjT.Wp6", "alice@staybook.com", 1 },
+                    { 2, "host-bruno", "$2a$11$MpFpbSFLtd5hKUoiTrSWsep.NlFQ6jVYcFX1pSnJ5SZMJPMjT.Wp6", "bruno@staybook.com", 1 },
+                    { 3, "host-carmen", "$2a$11$MpFpbSFLtd5hKUoiTrSWsep.NlFQ6jVYcFX1pSnJ5SZMJPMjT.Wp6", "carmen@staybook.com", 1 }
+                });
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DeleteData(
+                table: "Users",
+                keyColumn: "Id",
+                keyValue: 1);
+
+            migrationBuilder.DeleteData(
+                table: "Users",
+                keyColumn: "Id",
+                keyValue: 2);
+
+            migrationBuilder.DeleteData(
+                table: "Users",
+                keyColumn: "Id",
+                keyValue: 3);
+
             migrationBuilder.DropTable(
                 name: "Users");
         }

@@ -41,6 +41,7 @@ public class ExceptionHandlingMiddleware
             UserNotFoundException => (HttpStatusCode.BadRequest, exception.Message),
             InvalidPasswordException => (HttpStatusCode.BadRequest, exception.Message),
             InvalidOperationException => (HttpStatusCode.BadRequest, exception.Message),
+            UnauthorizedConversationAccessException => (HttpStatusCode.Unauthorized, exception.Message),
             _ => (HttpStatusCode.InternalServerError, "An unexpected error occurred")
         };
         

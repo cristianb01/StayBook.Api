@@ -25,6 +25,14 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             dr.Property(p => p.EndDate).HasColumnName("EndDate");
         });
 
+        const string seededPasswordHash = "$2a$11$MpFpbSFLtd5hKUoiTrSWsep.NlFQ6jVYcFX1pSnJ5SZMJPMjT.Wp6";
+
+        modelBuilder.Entity<User>().HasData(
+            new { Id = 1, UserName = "host-alice", PasswordHash = seededPasswordHash, Email = "alice@staybook.com", Role = UserRole.Host },
+            new { Id = 2, UserName = "host-bruno", PasswordHash = seededPasswordHash, Email = "bruno@staybook.com", Role = UserRole.Host },
+            new { Id = 3, UserName = "host-carmen", PasswordHash = seededPasswordHash, Email = "carmen@staybook.com", Role = UserRole.Host }
+        );
+
         modelBuilder.Entity<Property>().HasData(
             new { Id = 1, HostId = 1, Name = "Seaside Villa", Description = "A beautiful villa with ocean views." },
             new { Id = 2, HostId = 1, Name = "Mountain Cabin", Description = "Cozy cabin surrounded by pine trees." },
@@ -63,35 +71,26 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
 
         modelBuilder.Entity<Conversation>(entity =>
         {
-            entity.HasOne<Booking>()
-                .WithMany()
-                .HasForeignKey(c => c.BookingId)
-                .OnDelete(DeleteBehavior.Restrict);
-            
             entity.HasMany(c => c.Messages)
                 .WithOne()
-                .HasForeignKey(m => m.ConversationId)
+                .HasForeignKey("ConversationId")
                 .OnDelete(DeleteBehavior.Cascade);
             
             entity.Navigation<Message>(c => c.Messages)
                 .UsePropertyAccessMode(PropertyAccessMode.Field);
-            
-            // entity.HasOne<User>()
-            //     .WithMany()
-            //     .HasForeignKey(c => c.OwnerId)
-            //     .OnDelete(DeleteBehavior.Cascade);
-            //
-            // entity.HasOne<User>()
-            //     .WithMany()
-            //     .HasForeignKey(c => c.GuestId)
-            //     .OnDelete(DeleteBehavior.Cascade);
         });
 
         modelBuilder.Entity<Booking>(entity =>
         {
-            entity.HasOne<Conversation>()
+            entity.HasOne(b => b.Conversation)
                 .WithOne()
                 .HasForeignKey<Conversation>(c => c.BookingId)
+                .IsRequired()
+                .OnDelete(DeleteBehavior.Restrict);
+            
+            entity.HasOne<Property>(b => b.Property)
+                .WithMany()
+                .HasForeignKey(b => b.PropertyId)
                 .IsRequired()
                 .OnDelete(DeleteBehavior.Restrict);
         });

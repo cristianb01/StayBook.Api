@@ -16,7 +16,7 @@ public class Conversation
 
     public void AddMessage(int senderId, string content)
     {
-        var message = new Message(Id, senderId, content);
+        var message = new Message(senderId, content);
         _messages.Add(message);
     }
 }

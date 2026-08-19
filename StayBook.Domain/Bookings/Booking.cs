@@ -2,6 +2,7 @@ using StayBook.Domain.Bookings.Events;
 using StayBook.Domain.Common;
 using StayBook.Domain.Conversations;
 using StayBook.Domain.Enums;
+using StayBook.Domain.Properties;
 using StayBook.Domain.ValueObjects;
 
 namespace StayBook.Domain.Bookings;
@@ -10,6 +11,7 @@ public class Booking : AggregateRoot
 {
     public int Id { get; private set; }
     public int UserId { get; private set; }
+    public Property Property { get; private set; }
     public int PropertyId { get; private set; }
     public BookingStatus Status { get; private set; }
     public DateRange DateRange { get; private set; }
@@ -83,5 +85,10 @@ public class Booking : AggregateRoot
         Conversation = new Conversation(Id);
 
         return Conversation;
+    }
+
+    public bool CanSendMessage(int senderId)
+    {
+        return UserId == senderId || Property.HostId == senderId;
     }
 }

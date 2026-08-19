@@ -21,6 +21,9 @@ public class SendMessageCommandHandler : IRequestHandler<SendMessageCommand, Uni
 
         if (booking is null)
             throw new BookingNotFoundException(request.BookingId);
+        
+        if (!booking.CanSendMessage(request.SenderId))
+            throw new UnauthorizedConversationAccessException($"{request.SenderId} cannot send messages in this booking.");
 
         var conversation = booking.Conversation ?? booking.StartConversation(); 
 

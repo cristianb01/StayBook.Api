@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using StayBook.Infrastructure.Persistence;
 
@@ -11,9 +12,11 @@ using StayBook.Infrastructure.Persistence;
 namespace StayBook.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260814204603_FixConversationBookingRelationship")]
+    partial class FixConversationBookingRelationship
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -206,32 +209,6 @@ namespace StayBook.Infrastructure.Migrations
                         .IsUnique();
 
                     b.ToTable("Users");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Email = "alice@staybook.com",
-                            PasswordHash = "$2a$11$MpFpbSFLtd5hKUoiTrSWsep.NlFQ6jVYcFX1pSnJ5SZMJPMjT.Wp6",
-                            Role = 1,
-                            UserName = "host-alice"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Email = "bruno@staybook.com",
-                            PasswordHash = "$2a$11$MpFpbSFLtd5hKUoiTrSWsep.NlFQ6jVYcFX1pSnJ5SZMJPMjT.Wp6",
-                            Role = 1,
-                            UserName = "host-bruno"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Email = "carmen@staybook.com",
-                            PasswordHash = "$2a$11$MpFpbSFLtd5hKUoiTrSWsep.NlFQ6jVYcFX1pSnJ5SZMJPMjT.Wp6",
-                            Role = 1,
-                            UserName = "host-carmen"
-                        });
                 });
 
             modelBuilder.Entity("StayBook.Infrastructure.Persistence.Outbox.OutboxMessage", b =>

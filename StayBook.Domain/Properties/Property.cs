@@ -1,3 +1,4 @@
+using StayBook.Domain.Bookings;
 using StayBook.Domain.Common;
 
 namespace StayBook.Domain.Properties;
