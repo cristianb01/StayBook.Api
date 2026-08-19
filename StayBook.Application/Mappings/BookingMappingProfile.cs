@@ -11,7 +11,7 @@ public class BookingMappingProfile : Profile
         CreateMap<Booking, BookingDto>()
             .ConstructUsing(src => new BookingDto(
                 src.Id,
-                src.UserId,
+                src.GuestId,
                 src.PropertyId,
                 src.Status,
                 src.DateRange.StartDate,

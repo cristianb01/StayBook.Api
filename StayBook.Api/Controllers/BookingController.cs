@@ -1,14 +1,17 @@
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using StayBook.Api.Models;
 using StayBook.Application.Features.Bookings.Commands;
 using StayBook.Application.Features.Bookings.Queries;
 using StayBook.Application.Models;
+using StayBook.Extensions;
 
 namespace StayBook.Controllers;
 
 [Route("api/v1/[controller]")]
 [ApiController]
+[Authorize]
 public class BookingController : ControllerBase
 {
     private readonly IMediator _mediator;
@@ -21,8 +24,13 @@ public class BookingController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> CreateBooking([FromBody] CreateBookingRequest request, CancellationToken cancellationToken)
     {
+        if (!User.TryGetCurrentUserId(out var senderId))
+        {
+            return Unauthorized();
+        }
+        
         var command = new CreateBookingCommand(
-            request.UserId,
+            senderId,
             request.PropertyId,
             request.StartDate,
             request.EndDate);

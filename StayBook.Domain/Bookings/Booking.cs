@@ -10,7 +10,8 @@ namespace StayBook.Domain.Bookings;
 public class Booking : AggregateRoot
 {
     public int Id { get; private set; }
-    public int UserId { get; private set; }
+    public int GuestId { get; private set; }
+    public int HostId { get; private set; }
     public Property Property { get; private set; }
     public int PropertyId { get; private set; }
     public BookingStatus Status { get; private set; }
@@ -26,9 +27,10 @@ public class Booking : AggregateRoot
     // Required by EF Core
     private Booking() { }
 
-    public Booking(int userId, int propertyId, DateRange dateRange, decimal totalPrice)
+    public Booking(int guestId, int hostId, int propertyId, DateRange dateRange, decimal totalPrice)
     {
-        UserId = userId;
+        GuestId = guestId;
+        HostId = hostId;
         PropertyId = propertyId;
         DateRange = dateRange;
         Status = BookingStatus.Pending;
@@ -89,6 +91,6 @@ public class Booking : AggregateRoot
 
     public bool CanSendMessage(int senderId)
     {
-        return UserId == senderId || Property.HostId == senderId;
+        return GuestId == senderId || HostId == senderId;
     }
 }

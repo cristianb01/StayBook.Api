@@ -17,7 +17,7 @@ public class SendMessageCommandHandler : IRequestHandler<SendMessageCommand, Uni
 
     public async Task<Unit> Handle(SendMessageCommand request, CancellationToken cancellationToken)
     {
-        var booking = await _bookingRepository.GetByIdAsync(request.BookingId, cancellationToken);
+        var booking = await _bookingRepository.GetByIdWithPropertyAsync(request.BookingId, cancellationToken);
 
         if (booking is null)
             throw new BookingNotFoundException(request.BookingId);

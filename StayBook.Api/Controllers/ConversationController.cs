@@ -1,9 +1,9 @@
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 using StayBook.Api.Models;
 using StayBook.Application.Features.Messages.Commands;
+using StayBook.Extensions;
 
 namespace StayBook.Controllers;
 
@@ -25,7 +25,7 @@ public class ConversationController : ControllerBase
         [FromBody] SendMessageRequest request, 
         CancellationToken cancellationToken)
     {
-        if (!TryGetCurrentUserId(out var senderId))
+        if (!User.TryGetCurrentUserId(out var senderId))
         {
             return Unauthorized();
         }
@@ -33,11 +33,5 @@ public class ConversationController : ControllerBase
         var command = new SendMessageCommand(request.Content, senderId, bookingId);
         await _mediator.Send(command, cancellationToken);
         return Ok();
-    }
-
-    private bool TryGetCurrentUserId(out int userId)
-    {
-        var claimValue = User.FindFirstValue("sub") ?? User.FindFirstValue(ClaimTypes.NameIdentifier);
-        return int.TryParse(claimValue, out userId);
     }
 }

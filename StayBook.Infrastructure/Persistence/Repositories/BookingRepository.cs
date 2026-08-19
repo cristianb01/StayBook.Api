@@ -46,6 +46,13 @@ public class BookingRepository : IBookingRepository
         return _dbContext.Bookings.FirstOrDefaultAsync(b => b.Id == bookingId, cancellationToken);
     }
 
+    public Task<Booking?> GetByIdWithPropertyAsync(int bookingId, CancellationToken cancellationToken)
+    {
+        return _dbContext.Bookings
+            .Include(b => b.Property)
+            .FirstOrDefaultAsync(b => b.Id == bookingId, cancellationToken);
+    }
+
     public async Task UpdateAsync(Booking booking, CancellationToken cancellationToken)
     {
         _dbContext.Bookings.Update(booking);

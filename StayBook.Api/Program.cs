@@ -39,8 +39,6 @@ builder.Services.AddCors(options =>
             .AllowCredentials();
     }));
 
-builder.Services.ConfigureJwt(builder);
-
 builder.Services.AddMemoryCache();
 
 var app = builder.Build();
