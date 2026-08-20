@@ -9,6 +9,6 @@ public interface IBookingRepository
     Task<bool> HasOverlapAsync(int propertyId, DateTime startDate, DateTime endDate, CancellationToken cancellationToken);
     Task<List<Booking>> GetAllAsync(PaginationFilters paginationFilters, CancellationToken cancellationToken);
     Task<Booking?> GetByIdAsync(int bookingId, CancellationToken cancellationToken);
-    Task<Booking?> GetByIdWithPropertyAsync(int bookingId, CancellationToken cancellationToken);
+    Task<Booking?> GetByIdWithPropertyAndConversationAsync(int bookingId, CancellationToken cancellationToken);
     Task UpdateAsync(Booking booking, CancellationToken cancellationToken);
 }
