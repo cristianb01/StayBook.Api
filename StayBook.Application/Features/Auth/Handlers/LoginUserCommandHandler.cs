@@ -25,7 +25,7 @@ public class LoginUserCommandHandler : IRequestHandler<LoginCommand, LoginRespon
 
         if (user == null)
         {
-            throw new UserNotFoundException();
+            throw new ResourceNotFoundException("User not found");
         }
         
         var passwordValid = _passwordHasher.Verify(user.PasswordHash, request.Password);

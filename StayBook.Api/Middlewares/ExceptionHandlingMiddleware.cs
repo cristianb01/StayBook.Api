@@ -33,12 +33,11 @@ public class ExceptionHandlingMiddleware
         var (statusCode, message) = exception switch
         {
             BookingOverlayException => (HttpStatusCode.Conflict, exception.Message),
-            BookingNotFoundException => (HttpStatusCode.NotFound, exception.Message),
+            ResourceNotFoundException => (HttpStatusCode.NotFound, exception.Message),
             InvalidBookingStatusException => (HttpStatusCode.BadRequest, exception.Message),
             ArgumentException => (HttpStatusCode.BadRequest, exception.Message),
             PaymentFailedException => (HttpStatusCode.PaymentRequired, exception.Message),
             KeyNotFoundException => (HttpStatusCode.NotFound, exception.Message),
-            UserNotFoundException => (HttpStatusCode.BadRequest, exception.Message),
             InvalidPasswordException => (HttpStatusCode.BadRequest, exception.Message),
             InvalidOperationException => (HttpStatusCode.BadRequest, exception.Message),
             UnauthorizedConversationAccessException => (HttpStatusCode.Unauthorized, exception.Message),

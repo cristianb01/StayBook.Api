@@ -20,6 +20,7 @@ public static class IServiceCollectionExtensions
         services.AddScoped<IMySqlPropertyLock, MySqlPropertyLock>();
         services.AddScoped<IPasswordHasher, PasswordHasher>();
         services.AddScoped<IJwtProvider, JwtProvider>();
+        services.AddScoped<IConversationRepository, ConversationRepository>();
         
         return services;
     }

@@ -20,7 +20,7 @@ public class SendMessageCommandHandler : IRequestHandler<SendMessageCommand, Uni
         var booking = await _bookingRepository.GetByIdWithPropertyAndConversationAsync(request.BookingId, cancellationToken);
 
         if (booking is null)
-            throw new BookingNotFoundException(request.BookingId);
+            throw new ResourceNotFoundException("Booking", request.BookingId);
         
         if (!booking.CanSendMessage(request.SenderId))
             throw new UnauthorizedConversationAccessException($"{request.SenderId} cannot send messages in this booking.");

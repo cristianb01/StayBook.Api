@@ -22,7 +22,7 @@ public class GetBookingByIdQueryHandler : IRequestHandler<GetBookingByIdQuery, B
     {
         var booking = await _bookingRepository.GetByIdAsync(request.Id, cancellationToken);
         
-        if  (booking == null) throw new BookingNotFoundException(request.Id);
+        if  (booking == null) throw new ResourceNotFoundException("Booking", request.Id);
         
         return _mapper.Map<BookingDto>(booking);
     }

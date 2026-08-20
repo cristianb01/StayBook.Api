@@ -28,7 +28,7 @@ public class ConfirmBookingCommandHandler : IRequestHandler<ConfirmBookingComman
 
         if (existingBooking == null)
         {
-            throw new BookingNotFoundException(request.BookingId);
+            throw new ResourceNotFoundException("Booking", request.BookingId);
         }
 
         if (existingBooking.Status == BookingStatus.Confirmed)

@@ -25,7 +25,7 @@ public class CreateBookingCommandHandler : IRequestHandler<CreateBookingCommand,
         var property = await _propertyRepository.GetByIdAsync(request.PropertyId, cancellationToken);
         
         if (property is null)
-            throw new PropertyNotFoundException("Specified property not found");
+            throw new ResourceNotFoundException("Specified property not found");
         
         await _propertyLock.ExecuteAsync(request.PropertyId, cancellationToken);
 
