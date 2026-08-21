@@ -1,4 +1,5 @@
 using System.Net;
+using System.Security.Authentication;
 using System.Text.Json;
 using StayBook.Application.Exceptions;
 
@@ -38,7 +39,7 @@ public class ExceptionHandlingMiddleware
             ArgumentException => (HttpStatusCode.BadRequest, exception.Message),
             PaymentFailedException => (HttpStatusCode.PaymentRequired, exception.Message),
             KeyNotFoundException => (HttpStatusCode.NotFound, exception.Message),
-            InvalidPasswordException => (HttpStatusCode.BadRequest, exception.Message),
+            InvalidCredentialsException => (HttpStatusCode.Unauthorized, exception.Message),
             InvalidOperationException => (HttpStatusCode.BadRequest, exception.Message),
             UnauthorizedConversationAccessException => (HttpStatusCode.Unauthorized, exception.Message),
             _ => (HttpStatusCode.InternalServerError, "An unexpected error occurred")

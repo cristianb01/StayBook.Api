@@ -1,3 +1,4 @@
+using System.Security.Authentication;
 using MediatR;
 using StayBook.Application.Exceptions;
 using StayBook.Application.Features.Auth.Commands;
@@ -25,13 +26,13 @@ public class LoginUserCommandHandler : IRequestHandler<LoginCommand, LoginRespon
 
         if (user == null)
         {
-            throw new ResourceNotFoundException("User not found");
+            throw new InvalidCredentialsException();
         }
         
         var passwordValid = _passwordHasher.Verify(user.PasswordHash, request.Password);
         if (!passwordValid)
         {
-            throw new InvalidPasswordException();
+            throw new InvalidCredentialsException();
         }
         
         var tokenResponse = _jwtProvider.GenerateJwtToken(user);
