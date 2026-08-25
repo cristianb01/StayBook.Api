@@ -13,8 +13,10 @@ public class ConversationRepository : IConversationRepository
         _dbContext = dbContext;
     }
 
-    public Task<Conversation?> GetByIdAsync(int id, CancellationToken cancellationToken)
+    public Task<Conversation?> GetByBookingIdAsync(int bookingId, CancellationToken cancellationToken)
     {
-        return _dbContext.Conversations.FirstOrDefaultAsync(c => c.Id == id, cancellationToken);
+        return _dbContext.Conversations
+                .Include(c => c.Messages)
+                .FirstOrDefaultAsync(c => c.BookingId == bookingId, cancellationToken);
     }
 }

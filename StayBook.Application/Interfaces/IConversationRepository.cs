@@ -4,5 +4,5 @@ namespace StayBook.Application.Interfaces;
 
 public interface IConversationRepository
 {
-    Task<Conversation?> GetByIdAsync(int id, CancellationToken cancellationToken);
+    Task<Conversation?> GetByBookingIdAsync(int bookingId, CancellationToken cancellationToken);
 }

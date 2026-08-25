@@ -7,20 +7,20 @@ using StayBook.Application.Interfaces;
 
 namespace StayBook.Application.Features.Conversations.Handlers;
 
-public class GetConversationByIdQueryHandler : IRequestHandler<GetConversationByIdQuery, ConversationDto>
+public class GetConversationByBookingIdQueryHandler : IRequestHandler<GetConversationBybookingIdQuery, ConversationDto>
 {
     private readonly IConversationRepository _repository;
     private readonly IMapper _mapper;
 
-    public GetConversationByIdQueryHandler(IConversationRepository repository, IMapper mapper)
+    public GetConversationByBookingIdQueryHandler(IConversationRepository repository, IMapper mapper)
     {
         _repository = repository;
         _mapper = mapper;
     }
 
-    public async Task<ConversationDto> Handle(GetConversationByIdQuery request, CancellationToken cancellationToken)
+    public async Task<ConversationDto> Handle(GetConversationBybookingIdQuery request, CancellationToken cancellationToken)
     {
-        var conversation = await _repository.GetByIdAsync(request.Id, cancellationToken);
+        var conversation = await _repository.GetByBookingIdAsync(request.Id, cancellationToken);
         
         if (conversation is null)
             throw new ResourceNotFoundException("Conversation", request.Id);

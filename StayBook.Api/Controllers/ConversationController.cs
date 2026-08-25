@@ -10,7 +10,7 @@ namespace StayBook.Controllers;
 
 [ApiController]
 [Authorize]
-[Route("api/[controller]")]
+[Route("api/v1/[controller]")]
 public class ConversationController : ControllerBase
 {
     private readonly IMediator _mediator;
@@ -37,14 +37,14 @@ public class ConversationController : ControllerBase
     }
 
     [HttpGet("{bookingId:int}")]
-    public async Task<IActionResult> GetByIdAsync(int bookingId, CancellationToken cancellationToken)
+    public async Task<IActionResult> GetByBookingIdAsync(int bookingId, CancellationToken cancellationToken)
     {
         if (!User.TryGetCurrentUserId(out var userId))
         {
             return Unauthorized();
         }
         
-        var query = new GetConversationByIdQuery(bookingId);
+        var query = new GetConversationBybookingIdQuery(bookingId);
         
         var conversation = await _mediator.Send(query, cancellationToken);
         return Ok(conversation);
