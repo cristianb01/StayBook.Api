@@ -10,7 +10,7 @@ namespace StayBook.Controllers;
 
 [ApiController]
 [Authorize]
-[Route("api/v1/[controller]")]
+[Route("api/v1")]
 public class ConversationController : ControllerBase
 {
     private readonly IMediator _mediator;
@@ -20,10 +20,11 @@ public class ConversationController : ControllerBase
         _mediator = mediator;
     }
 
-    [HttpPost("{bookingId:int}")]
+    [HttpPost("/api/v1/conversation/{bookingId:int}")]
+    [HttpPost("bookings/{bookingId:int}/conversation")]
     public async Task<IActionResult> Create(
-        [FromRoute] int bookingId, 
-        [FromBody] SendMessageRequest request, 
+        [FromRoute] int bookingId,
+        [FromBody] SendMessageRequest request,
         CancellationToken cancellationToken)
     {
         if (!User.TryGetCurrentUserId(out var senderId))
@@ -36,18 +37,18 @@ public class ConversationController : ControllerBase
         return Ok();
     }
 
-    [HttpGet("{bookingId:int}")]
+    [HttpGet("/api/v1/conversation/{bookingId:int}")]
+    [HttpGet("bookings/{bookingId:int}/conversation")]
     public async Task<IActionResult> GetByBookingIdAsync(int bookingId, CancellationToken cancellationToken)
     {
         if (!User.TryGetCurrentUserId(out var userId))
         {
             return Unauthorized();
         }
-        
-        var query = new GetConversationBybookingIdQuery(bookingId);
-        
+
+        var query = new GetConversationBybookingIdQuery(bookingId, userId);
+
         var conversation = await _mediator.Send(query, cancellationToken);
         return Ok(conversation);
     }
-    
 }
