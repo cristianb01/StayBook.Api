@@ -20,7 +20,6 @@ public class ConversationController : ControllerBase
         _mediator = mediator;
     }
 
-    [HttpPost("/api/v1/conversation/{bookingId:int}")]
     [HttpPost("bookings/{bookingId:int}/conversation")]
     public async Task<IActionResult> Create(
         [FromRoute] int bookingId,
@@ -37,7 +36,6 @@ public class ConversationController : ControllerBase
         return Ok();
     }
 
-    [HttpGet("/api/v1/conversation/{bookingId:int}")]
     [HttpGet("bookings/{bookingId:int}/conversation")]
     public async Task<IActionResult> GetByBookingIdAsync(int bookingId, CancellationToken cancellationToken)
     {

@@ -25,19 +25,17 @@ public class GetConversationByBookingIdQueryHandler : IRequestHandler<GetConvers
 
     public async Task<ConversationDto> Handle(GetConversationBybookingIdQuery request, CancellationToken cancellationToken)
     {
-        var booking = await _bookingRepository.GetByIdAsync(request.BookingId, cancellationToken);
+        var booking = await _bookingRepository.GetByIdWithPropertyAndConversationAsync(request.BookingId, cancellationToken);
 
         if (booking is null)
             throw new ResourceNotFoundException("Booking", request.BookingId);
 
-        if (booking.GuestId != request.UserId && booking.HostId != request.UserId)
+        if (!booking.IsMember(request.UserId))
             throw new UnauthorizedConversationAccessException($"User {request.UserId} cannot access conversation for booking {request.BookingId}.");
 
-        var conversation = await _repository.GetByBookingIdAsync(request.BookingId, cancellationToken);
-
-        if (conversation is null)
+        if (booking.Conversation is null)
             throw new ResourceNotFoundException("Conversation", request.BookingId);
 
-        return _mapper.Map<ConversationDto>(conversation);
+        return _mapper.Map<ConversationDto>(booking.Conversation);
     }
 }

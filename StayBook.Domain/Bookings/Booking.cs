@@ -89,7 +89,7 @@ public class Booking : AggregateRoot
         return Conversation;
     }
 
-    public bool CanSendMessage(int senderId)
+    public bool IsMember(int senderId)
     {
         return GuestId == senderId || HostId == senderId;
     }

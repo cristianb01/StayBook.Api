@@ -22,7 +22,7 @@ public class SendMessageCommandHandler : IRequestHandler<SendMessageCommand, Uni
         if (booking is null)
             throw new ResourceNotFoundException("Booking", request.BookingId);
         
-        if (!booking.CanSendMessage(request.SenderId))
+        if (!booking.IsMember(request.SenderId))
             throw new UnauthorizedConversationAccessException($"{request.SenderId} cannot send messages in this booking.");
 
         var conversation = booking.Conversation ?? booking.StartConversation(); 
