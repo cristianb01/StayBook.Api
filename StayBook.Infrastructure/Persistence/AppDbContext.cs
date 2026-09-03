@@ -93,6 +93,16 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
                 .HasForeignKey(b => b.PropertyId)
                 .IsRequired()
                 .OnDelete(DeleteBehavior.Restrict);
+            
+            entity.HasOne<User>(b => b.Guest)
+                .WithMany()
+                .HasForeignKey(b => b.GuestId)
+                .OnDelete(DeleteBehavior.Restrict);
+            
+            entity.HasOne<User>(b => b.Host)
+                .WithMany()
+                .HasForeignKey(b => b.HostId)
+                .OnDelete(DeleteBehavior.Restrict);
         });
     }
 

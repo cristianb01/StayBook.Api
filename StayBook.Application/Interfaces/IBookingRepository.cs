@@ -10,5 +10,6 @@ public interface IBookingRepository
     Task<List<Booking>> GetAllAsync(PaginationFilters paginationFilters, CancellationToken cancellationToken);
     Task<Booking?> GetByIdAsync(int bookingId, CancellationToken cancellationToken);
     Task<Booking?> GetByIdWithPropertyAndConversationAsync(int bookingId, CancellationToken cancellationToken);
+    public Task<Booking?> GetForConversationAsync(int bookingId, CancellationToken cancellationToken);
     Task UpdateAsync(Booking booking, CancellationToken cancellationToken);
 }

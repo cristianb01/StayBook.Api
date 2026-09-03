@@ -9,33 +9,34 @@ namespace StayBook.Application.Features.Conversations.Handlers;
 
 public class GetConversationByBookingIdQueryHandler : IRequestHandler<GetConversationBybookingIdQuery, ConversationDto>
 {
-    private readonly IConversationRepository _repository;
+    private readonly IConversationsQueries _conversationsQueries;
     private readonly IBookingRepository _bookingRepository;
     private readonly IMapper _mapper;
 
     public GetConversationByBookingIdQueryHandler(
-        IConversationRepository repository,
+        IConversationsQueries conversationsQueries,
         IBookingRepository bookingRepository,
         IMapper mapper)
     {
-        _repository = repository;
+        _conversationsQueries = conversationsQueries;
         _bookingRepository = bookingRepository;
         _mapper = mapper;
     }
 
     public async Task<ConversationDto> Handle(GetConversationBybookingIdQuery request, CancellationToken cancellationToken)
     {
-        var booking = await _bookingRepository.GetByIdWithPropertyAndConversationAsync(request.BookingId, cancellationToken);
-
+        
+        var booking = await _bookingRepository.GetForConversationAsync(request.BookingId, cancellationToken);
+        
         if (booking is null)
             throw new ResourceNotFoundException("Booking", request.BookingId);
-
+        
         if (!booking.IsMember(request.UserId))
             throw new UnauthorizedConversationAccessException($"User {request.UserId} cannot access conversation for booking {request.BookingId}.");
-
+        
         if (booking.Conversation is null)
             throw new ResourceNotFoundException("Conversation", request.BookingId);
-
+        
         return _mapper.Map<ConversationDto>(booking.Conversation);
     }
 }

@@ -3,6 +3,7 @@ using StayBook.Domain.Common;
 using StayBook.Domain.Conversations;
 using StayBook.Domain.Enums;
 using StayBook.Domain.Properties;
+using StayBook.Domain.Users;
 using StayBook.Domain.ValueObjects;
 
 namespace StayBook.Domain.Bookings;
@@ -11,7 +12,9 @@ public class Booking : AggregateRoot
 {
     public int Id { get; private set; }
     public int GuestId { get; private set; }
+    public User Guest { get; private set; } = null!;
     public int HostId { get; private set; }
+    public User Host { get; private set; } = null!;
     public Property Property { get; private set; }
     public int PropertyId { get; private set; }
     public BookingStatus Status { get; private set; }
