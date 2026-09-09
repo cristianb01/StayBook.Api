@@ -1,7 +1,7 @@
 using AutoMapper;
 using MediatR;
 using StayBook.Application.Exceptions;
-using StayBook.Application.Features.Bookings.DTOs;
+using StayBook.Application.Features.Conversations.Dtos;
 using StayBook.Application.Features.Conversations.Queries;
 using StayBook.Application.Interfaces;
 
@@ -9,16 +9,13 @@ namespace StayBook.Application.Features.Conversations.Handlers;
 
 public class GetConversationByBookingIdQueryHandler : IRequestHandler<GetConversationBybookingIdQuery, ConversationDto>
 {
-    private readonly IConversationsQueries _conversationsQueries;
     private readonly IBookingRepository _bookingRepository;
     private readonly IMapper _mapper;
 
     public GetConversationByBookingIdQueryHandler(
-        IConversationsQueries conversationsQueries,
         IBookingRepository bookingRepository,
         IMapper mapper)
     {
-        _conversationsQueries = conversationsQueries;
         _bookingRepository = bookingRepository;
         _mapper = mapper;
     }
@@ -37,6 +34,6 @@ public class GetConversationByBookingIdQueryHandler : IRequestHandler<GetConvers
         if (booking.Conversation is null)
             throw new ResourceNotFoundException("Conversation", request.BookingId);
         
-        return _mapper.Map<ConversationDto>(booking.Conversation);
+        return _mapper.Map<ConversationDto>(booking);
     }
 }

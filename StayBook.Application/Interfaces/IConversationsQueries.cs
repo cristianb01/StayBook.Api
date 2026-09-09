@@ -1,4 +1,5 @@
 using StayBook.Application.Features.Bookings.DTOs;
+using StayBook.Application.Features.Conversations.Dtos;
 
 namespace StayBook.Application.Interfaces;
 

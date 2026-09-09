@@ -1,6 +1,5 @@
 using StayBook.Application.Features.Auth.Dtos;
-using StayBook.Domain.Conversations;
 
 namespace StayBook.Application.Features.Conversations.Dtos;
 
-public record ConversationDto(int Id, List<UserDto> Participants, List<MessageDto> Messages);
+public record ConversationDto(int Id, int BookingId, List<MessageDto> Messages, UserDto Guest, UserDto Host, DateTime CreatedAt);
