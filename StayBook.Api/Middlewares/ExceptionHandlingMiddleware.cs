@@ -2,6 +2,7 @@ using System.Net;
 using System.Security.Authentication;
 using System.Text.Json;
 using StayBook.Application.Exceptions;
+using StayBook.Exceptions;
 
 namespace StayBook.Middlewares;
 
@@ -42,6 +43,7 @@ public class ExceptionHandlingMiddleware
             InvalidCredentialsException => (HttpStatusCode.Unauthorized, exception.Message),
             InvalidOperationException => (HttpStatusCode.BadRequest, exception.Message),
             UnauthorizedConversationAccessException => (HttpStatusCode.Forbidden, exception.Message),
+            UnauthorizedException => (HttpStatusCode.Unauthorized, exception.Message),
             _ => (HttpStatusCode.InternalServerError, "An unexpected error occurred")
         };
         

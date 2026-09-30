@@ -24,10 +24,7 @@ public class BookingController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> CreateBooking([FromBody] CreateBookingRequest request, CancellationToken cancellationToken)
     {
-        if (!User.TryGetCurrentUserId(out var senderId))
-        {
-            return Unauthorized();
-        }
+        var senderId = User.TryGetCurrentUserId();
         
         var command = new CreateBookingCommand(
             senderId,

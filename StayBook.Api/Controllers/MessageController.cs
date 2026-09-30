@@ -25,10 +25,7 @@ public class MessageController : ControllerBase
         [FromBody] SendMessageRequest request,
         CancellationToken cancellationToken)
     {
-        if (!User.TryGetCurrentUserId(out var senderId))
-        {
-            return Unauthorized();
-        }
+        var senderId = User.TryGetCurrentUserId();
 
         var command = new SendMessageCommand(request.Content, senderId, bookingId);
         var message = await _mediator.Send(command, cancellationToken);

@@ -26,10 +26,7 @@ public class ConversationController : ControllerBase
         [FromRoute] int bookingId,
         CancellationToken cancellationToken)
     {
-        if (!User.TryGetCurrentUserId(out var userId))
-        {
-            return Unauthorized();
-        }
+        var userId = User.TryGetCurrentUserId();
 
         var command = new CreateConversationCommand(bookingId, userId);
         await _mediator.Send(command, cancellationToken);
@@ -39,10 +36,7 @@ public class ConversationController : ControllerBase
     [HttpGet("bookings/{bookingId:int}/conversation")]
     public async Task<IActionResult> GetByBookingIdAsync(int bookingId, CancellationToken cancellationToken)
     {
-        if (!User.TryGetCurrentUserId(out var userId))
-        {
-            return Unauthorized();
-        }
+        var userId = User.TryGetCurrentUserId();
 
         var query = new GetConversationBybookingIdQuery(bookingId, userId);
 
