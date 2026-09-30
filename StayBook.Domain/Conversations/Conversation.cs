@@ -14,9 +14,10 @@ public class Conversation
         CreatedAt = DateTime.Now;
     }
 
-    public void AddMessage(int senderId, string content)
+    public Message AddMessage(int senderId, string content)
     {
         var message = new Message(senderId, content);
         _messages.Add(message);
+        return message;
     }
 }

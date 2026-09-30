@@ -2,6 +2,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using StayBook.Api.Models;
+using StayBook.Application.Features.Conversations.Commands;
 using StayBook.Application.Features.Conversations.Queries;
 using StayBook.Application.Features.Messages.Commands;
 using StayBook.Extensions;
@@ -23,15 +24,14 @@ public class ConversationController : ControllerBase
     [HttpPost("bookings/{bookingId:int}/conversation")]
     public async Task<IActionResult> Create(
         [FromRoute] int bookingId,
-        [FromBody] SendMessageRequest request,
         CancellationToken cancellationToken)
     {
-        if (!User.TryGetCurrentUserId(out var senderId))
+        if (!User.TryGetCurrentUserId(out var userId))
         {
             return Unauthorized();
         }
 
-        var command = new SendMessageCommand(request.Content, senderId, bookingId);
+        var command = new CreateConversationCommand(bookingId, userId);
         await _mediator.Send(command, cancellationToken);
         return Ok();
     }

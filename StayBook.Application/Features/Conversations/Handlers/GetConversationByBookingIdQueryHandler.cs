@@ -7,7 +7,7 @@ using StayBook.Application.Interfaces;
 
 namespace StayBook.Application.Features.Conversations.Handlers;
 
-public class GetConversationByBookingIdQueryHandler : IRequestHandler<GetConversationBybookingIdQuery, ConversationDto>
+public class GetConversationByBookingIdQueryHandler : IRequestHandler<GetConversationBybookingIdQuery, BookingConversationDto>
 {
     private readonly IBookingRepository _bookingRepository;
     private readonly IMapper _mapper;
@@ -20,7 +20,7 @@ public class GetConversationByBookingIdQueryHandler : IRequestHandler<GetConvers
         _mapper = mapper;
     }
 
-    public async Task<ConversationDto> Handle(GetConversationBybookingIdQuery request, CancellationToken cancellationToken)
+    public async Task<BookingConversationDto> Handle(GetConversationBybookingIdQuery request, CancellationToken cancellationToken)
     {
         
         var booking = await _bookingRepository.GetForConversationAsync(request.BookingId, cancellationToken);
@@ -31,9 +31,6 @@ public class GetConversationByBookingIdQueryHandler : IRequestHandler<GetConvers
         if (!booking.IsMember(request.UserId))
             throw new UnauthorizedConversationAccessException($"User {request.UserId} cannot access conversation for booking {request.BookingId}.");
         
-        if (booking.Conversation is null)
-            throw new ResourceNotFoundException("Conversation", request.BookingId);
-        
-        return _mapper.Map<ConversationDto>(booking);
+        return _mapper.Map<BookingConversationDto>(booking);
     }
 }

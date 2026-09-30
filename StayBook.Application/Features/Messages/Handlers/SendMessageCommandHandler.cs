@@ -4,9 +4,9 @@ using StayBook.Application.Features.Messages.Commands;
 using StayBook.Application.Interfaces;
 using StayBook.Domain.Conversations;
 
-namespace StayBook.Application.Features.Conversations.Handlers;
+namespace StayBook.Application.Features.Messages.Handlers;
 
-public class SendMessageCommandHandler : IRequestHandler<SendMessageCommand, Unit>
+public class SendMessageCommandHandler : IRequestHandler<SendMessageCommand, Message>
 {
     private readonly IBookingRepository _bookingRepository;
 
@@ -15,9 +15,9 @@ public class SendMessageCommandHandler : IRequestHandler<SendMessageCommand, Uni
         _bookingRepository = bookingRepository;
     }
 
-    public async Task<Unit> Handle(SendMessageCommand request, CancellationToken cancellationToken)
+    public async Task<Message> Handle(SendMessageCommand request, CancellationToken cancellationToken)
     {
-        var booking = await _bookingRepository.GetByIdWithPropertyAndConversationAsync(request.BookingId, cancellationToken);
+        var booking = await _bookingRepository.GetByIdWithConversationAsync(request.BookingId, cancellationToken);
 
         if (booking is null)
             throw new ResourceNotFoundException("Booking", request.BookingId);
@@ -27,9 +27,9 @@ public class SendMessageCommandHandler : IRequestHandler<SendMessageCommand, Uni
 
         var conversation = booking.Conversation ?? booking.StartConversation(); 
 
-        conversation.AddMessage(request.SenderId, request.Content);
+        var createdMessage = conversation.AddMessage(request.SenderId, request.Content);
         
         await _bookingRepository.UpdateAsync(booking, cancellationToken);
-        return Unit.Value;
+        return createdMessage;
     }
 }

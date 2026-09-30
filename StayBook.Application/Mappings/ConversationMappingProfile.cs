@@ -11,12 +11,10 @@ public class ConversationMappingProfile : Profile
     {
         CreateMap<Conversation, ConversationDto>();
 
-        CreateMap<Booking, ConversationDto>()
-            .ForCtorParam(nameof(ConversationDto.Id), opt => opt.MapFrom(src => src.Conversation!.Id))
-            .ForCtorParam(nameof(ConversationDto.BookingId), opt => opt.MapFrom(src => src.Conversation!.BookingId))
-            .ForCtorParam(nameof(ConversationDto.Messages), opt => opt.MapFrom(src => src.Conversation!.Messages))
-            .ForCtorParam(nameof(ConversationDto.Guest), opt => opt.MapFrom(src => src.Guest))
-            .ForCtorParam(nameof(ConversationDto.Host), opt => opt.MapFrom(src => src.Host))
-            .ForCtorParam(nameof(ConversationDto.CreatedAt), opt => opt.MapFrom(src => src.Conversation!.CreatedAt));
+        CreateMap<Booking, BookingConversationDto>()
+            .ForCtorParam(nameof(BookingConversationDto.BookingId), opt => opt.MapFrom(src => src.Id))
+            .ForCtorParam(nameof(BookingConversationDto.Guest), opt => opt.MapFrom(src => src.Guest))
+            .ForCtorParam(nameof(BookingConversationDto.Host), opt => opt.MapFrom(src => src.Host))
+            .ForCtorParam(nameof(BookingConversationDto.Conversation), opt => opt.MapFrom(src => src.Conversation));
     }
 }
