@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using StayBook.Application.Interfaces;
 using StayBook.Infrastructure.Helpers;
@@ -32,6 +33,16 @@ public static class IServiceCollectionExtensions
             {
                 options.Audience = services.BuildServiceProvider().GetRequiredService<IConfiguration>()["Jwt:Audience"];
                 options.RequireHttpsMetadata = false;
+                options.Events = new JwtBearerEvents
+                {
+                    OnMessageReceived = ctx =>
+                    {
+                        var token = ctx.Request.Query["access_token"];
+                        if (!string.IsNullOrEmpty(token) && ctx.HttpContext.Request.Path.StartsWithSegments("/hubs/chat"))
+                            ctx.Token = token;
+                        return Task.CompletedTask;
+                    }
+                };
                 options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
                 {
                     ValidateIssuer = true,

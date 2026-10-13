@@ -1,14 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using StayBook.Application.Features.Bookings.Commands;
-using StayBook.Application.Interfaces;
 using StayBook.Application.Mappings;
 using StayBook.Extensions;
-using StayBook.Infrastructure.Helpers;
-using StayBook.Infrastructure.Models;
+using StayBook.Hubs;
 using StayBook.Infrastructure.Persistence;
-using StayBook.Infrastructure.Persistence.Repositories;
-using StayBook.Infrastructure.Persistence.UnitOfWork;
-using StayBook.Infrastructure.Services;
 using StayBook.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -41,6 +36,11 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddMemoryCache();
 
+builder.Services.AddSignalR(options =>
+{
+    options.EnableDetailedErrors = true;
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -59,4 +59,5 @@ app.UseAuthorization();
 
 app.UseHttpsRedirection();
 app.MapControllers();
+app.MapHub<ChatHub>("/hubs/chat");
 app.Run();
