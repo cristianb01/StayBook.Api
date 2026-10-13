@@ -1,10 +1,12 @@
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using StayBook.Api.Models;
 using StayBook.Application.Features.Messages.Commands;
 using StayBook.Domain.Conversations;
 using StayBook.Extensions;
+using StayBook.Hubs;
 
 namespace StayBook.Controllers;
 
@@ -14,10 +16,12 @@ namespace StayBook.Controllers;
 public class MessageController : ControllerBase
 {
     private readonly IMediator _mediator;
+    private readonly IHubContext<ChatHub>  _chatHub;
 
-    public MessageController(IMediator mediator)
+    public MessageController(IMediator mediator, IHubContext<ChatHub> chatHub)
     {
         _mediator = mediator;
+        _chatHub = chatHub;
     }
 
     [HttpPost("bookings/{bookingId:int}/conversation/messages")]
@@ -29,6 +33,13 @@ public class MessageController : ControllerBase
 
         var command = new SendMessageCommand(request.Content, senderId, bookingId);
         var message = await _mediator.Send(command, cancellationToken);
+
+        var notification = new MessageReceivedDto(message.Id, bookingId, senderId, message.Content, message.CreatedAt);
+        
+        await _chatHub.Clients
+            .Group($"conversation:{bookingId}")
+            .SendAsync("MessageReceived", notification, cancellationToken);
+        
         return Ok(message);
     }
     
