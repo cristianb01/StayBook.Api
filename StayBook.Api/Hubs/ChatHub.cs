@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using System.Text.RegularExpressions;
+using MediatR;
 using Microsoft.AspNetCore.SignalR;
 using StayBook.Application.Exceptions;
 using StayBook.Application.Features.Bookings.Queries;
@@ -54,7 +55,7 @@ public class ChatHub(IMediator mediator) : Hub
         if (bookingConversation.Conversation is null)
             throw new HubException("Conversation not found.");
 
-        await Groups.AddToGroupAsync(Context.ConnectionId, $"conversation-{bookingConversation.Conversation.Id}", Context.ConnectionAborted);
+        await Groups.AddToGroupAsync(Context.ConnectionId, GetGroupName(bookingConversation.Conversation.Id), Context.ConnectionAborted);
     }
 
     public async Task LeaveConversation(int bookingId)
@@ -81,11 +82,79 @@ public class ChatHub(IMediator mediator) : Hub
                  throw new HubException("Access denied.");               
             }
             
-            await Groups.RemoveFromGroupAsync(Context.ConnectionId, $"conversation:{bookingId}", Context.ConnectionAborted);
+            await Groups.RemoveFromGroupAsync(Context.ConnectionId, GetGroupName(bookingId), Context.ConnectionAborted);
         }
         catch (ResourceNotFoundException)
         {
             throw new HubException("Booking not found.");
         }
     }
+
+    public async Task Typing(int bookingId)
+    {
+        if (Context.User?.Identity?.IsAuthenticated != true)
+            throw new HubException("Unauthorized.");
+
+        int userId;
+        try
+        {
+            userId = Context.User.TryGetCurrentUserId();
+        }
+        catch (UnauthorizedException)
+        {
+            throw new HubException("Unauthorized.");
+        }
+
+        try
+        {
+            var isMember = await mediator.Send(new IsBookingMemberQuery(bookingId, userId));
+            
+            if (!isMember)
+            {
+                throw new HubException("Access denied.");               
+            }
+            
+            await Clients.GroupExcept(GetGroupName(bookingId), Context.ConnectionId)
+                .SendAsync("Typing", Context.ConnectionAborted);
+        }
+        catch (ResourceNotFoundException)
+        {
+            throw new HubException("Booking not found.");
+        }
+    }
+
+    public async Task StopTyping(int bookingId)
+    {
+        if (Context.User?.Identity?.IsAuthenticated != true) 
+            throw new HubException("Unauthorized.");
+        
+        int userId;
+        try
+        {
+            userId = Context.User.TryGetCurrentUserId();
+        }
+        catch (UnauthorizedException) 
+        {
+            throw new HubException("Unauthorized.");
+        }
+        
+        try
+        {
+            var isMember = await mediator.Send(new IsBookingMemberQuery(bookingId, userId));
+            
+            if (!isMember)
+            {
+                throw new HubException("Access denied.");               
+            }
+            
+            await Clients.GroupExcept(GetGroupName(bookingId), Context.ConnectionId)
+                .SendAsync("StopTyping", Context.ConnectionAborted);
+        }
+        catch (ResourceNotFoundException)
+        {
+            throw new HubException("Booking not found.");
+        }
+    }
+    
+    public static string GetGroupName(int bookingId) => $"conversation:{bookingId}";
 }

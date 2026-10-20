@@ -32,12 +32,12 @@ public class MessageController : ControllerBase
         var senderId = User.TryGetCurrentUserId();
 
         var command = new SendMessageCommand(request.Content, senderId, bookingId);
-        var message = await _mediator.Send(command, cancellationToken);
+        var message = await _mediator.Send(command, cancellationToken); // This already checks if user is member
 
         var notification = new MessageReceivedDto(message.Id, bookingId, senderId, message.Content, message.CreatedAt);
         
         await _chatHub.Clients
-            .Group($"conversation:{bookingId}")
+            .Group(ChatHub.GetGroupName(bookingId))
             .SendAsync("MessageReceived", notification, cancellationToken);
         
         return Ok(message);
