@@ -1,8 +1,7 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Collections.Generic;
 using MediatR;
 using Microsoft.AspNetCore.SignalR;
 using StayBook.Application.Exceptions;
-using StayBook.Application.Features.Bookings.Queries;
 using StayBook.Application.Features.Conversations.Dtos;
 using StayBook.Application.Features.Conversations.Queries;
 using StayBook.Exceptions;
@@ -12,6 +11,8 @@ namespace StayBook.Hubs;
 
 public class ChatHub(IMediator mediator) : Hub
 {
+    private const string JoinedBookingsContextKey = "StayBook.ChatHub.JoinedBookings";
+
     public override async Task OnConnectedAsync()
     {
         Console.WriteLine($"{Context.ConnectionId} connected");
@@ -25,18 +26,7 @@ public class ChatHub(IMediator mediator) : Hub
 
     public async Task JoinConversation(int bookingId)
     {
-        if (Context.User?.Identity?.IsAuthenticated != true)
-            throw new HubException("Unauthorized.");
-
-        int userId;
-        try
-        {
-            userId = Context.User.TryGetCurrentUserId();
-        }
-        catch (UnauthorizedException)
-        {
-            throw new HubException("Unauthorized.");
-        }
+        var userId = GetAuthenticatedUserId();
 
         BookingConversationDto bookingConversation;
         try
@@ -55,106 +45,78 @@ public class ChatHub(IMediator mediator) : Hub
         if (bookingConversation.Conversation is null)
             throw new HubException("Conversation not found.");
 
-        await Groups.AddToGroupAsync(Context.ConnectionId, GetGroupName(bookingConversation.Conversation.Id), Context.ConnectionAborted);
+        await Groups.AddToGroupAsync(Context.ConnectionId, GetGroupName(bookingId), Context.ConnectionAborted);
+        lock (Context.Items)
+        {
+            GetJoinedBookings().Add(bookingId);
+        }
     }
 
     public async Task LeaveConversation(int bookingId)
     {
-        if (Context.User?.Identity?.IsAuthenticated != true) 
-            throw new HubException("Unauthorized.");
-        
-        int userId;
-        try
-        {
-            userId = Context.User.TryGetCurrentUserId();
-        }
-        catch (UnauthorizedException)
-        {
-            throw new HubException("Unauthorized.");
-        }
+        GetAuthenticatedUserId();
 
-        try
+        await Groups.RemoveFromGroupAsync(Context.ConnectionId, GetGroupName(bookingId), Context.ConnectionAborted);
+        lock (Context.Items)
         {
-            var isMember = await mediator.Send(new IsBookingMemberQuery(bookingId, userId));
-            
-            if (!isMember)
-            {
-                 throw new HubException("Access denied.");               
-            }
-            
-            await Groups.RemoveFromGroupAsync(Context.ConnectionId, GetGroupName(bookingId), Context.ConnectionAborted);
-        }
-        catch (ResourceNotFoundException)
-        {
-            throw new HubException("Booking not found.");
+            GetJoinedBookings().Remove(bookingId);
         }
     }
 
     public async Task Typing(int bookingId)
     {
+        GetAuthenticatedUserId();
+        EnsureJoinedConversation(bookingId);
+
+        await Clients.GroupExcept(GetGroupName(bookingId), Context.ConnectionId)
+            .SendAsync("Typing", Context.ConnectionAborted);
+    }
+
+    public async Task StopTyping(int bookingId)
+    {
+        GetAuthenticatedUserId();
+        EnsureJoinedConversation(bookingId);
+
+        await Clients.GroupExcept(GetGroupName(bookingId), Context.ConnectionId)
+            .SendAsync("StopTyping", Context.ConnectionAborted);
+    }
+
+    private int GetAuthenticatedUserId()
+    {
         if (Context.User?.Identity?.IsAuthenticated != true)
             throw new HubException("Unauthorized.");
 
-        int userId;
         try
         {
-            userId = Context.User.TryGetCurrentUserId();
+            return Context.User.TryGetCurrentUserId();
         }
         catch (UnauthorizedException)
         {
             throw new HubException("Unauthorized.");
         }
-
-        try
-        {
-            var isMember = await mediator.Send(new IsBookingMemberQuery(bookingId, userId));
-            
-            if (!isMember)
-            {
-                throw new HubException("Access denied.");               
-            }
-            
-            await Clients.GroupExcept(GetGroupName(bookingId), Context.ConnectionId)
-                .SendAsync("Typing", Context.ConnectionAborted);
-        }
-        catch (ResourceNotFoundException)
-        {
-            throw new HubException("Booking not found.");
-        }
     }
 
-    public async Task StopTyping(int bookingId)
+    private void EnsureJoinedConversation(int bookingId)
     {
-        if (Context.User?.Identity?.IsAuthenticated != true) 
-            throw new HubException("Unauthorized.");
-        
-        int userId;
-        try
+        lock (Context.Items)
         {
-            userId = Context.User.TryGetCurrentUserId();
-        }
-        catch (UnauthorizedException) 
-        {
-            throw new HubException("Unauthorized.");
-        }
-        
-        try
-        {
-            var isMember = await mediator.Send(new IsBookingMemberQuery(bookingId, userId));
-            
-            if (!isMember)
-            {
-                throw new HubException("Access denied.");               
-            }
-            
-            await Clients.GroupExcept(GetGroupName(bookingId), Context.ConnectionId)
-                .SendAsync("StopTyping", Context.ConnectionAborted);
-        }
-        catch (ResourceNotFoundException)
-        {
-            throw new HubException("Booking not found.");
+            if (!GetJoinedBookings().Contains(bookingId))
+                throw new HubException("Access denied.");
         }
     }
-    
+
+    private HashSet<int> GetJoinedBookings()
+    {
+        if (Context.Items.TryGetValue(JoinedBookingsContextKey, out var value)
+            && value is HashSet<int> joinedBookings)
+        {
+            return joinedBookings;
+        }
+
+        var newJoinedBookings = new HashSet<int>();
+        Context.Items[JoinedBookingsContextKey] = newJoinedBookings;
+        return newJoinedBookings;
+    }
+
     public static string GetGroupName(int bookingId) => $"conversation:{bookingId}";
 }
