@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using StayBook.Api.Models;
 using StayBook.Application.Features.Auth.Commands;
+using StayBook.Application.Features.Auth.Dtos;
 
 namespace StayBook.Controllers;
 
@@ -28,10 +29,25 @@ public class AuthController : ControllerBase
 
     [HttpPost("login")]
     [AllowAnonymous]
-    public async Task<IActionResult> Login([FromBody] LoginUserRequest request)
+    public async Task<ActionResult<LoginResponse>> Login([FromBody] LoginUserRequest request)
     {
         var command = new LoginCommand(request.Email, request.Password);
-        var response = await _mediator.Send(command);
-        return Ok(response);
+        
+        LoginResult loginResult = await _mediator.Send(command);
+        
+        Response.Cookies.Append(
+            "refreshToken", 
+            loginResult.RefreshToken,
+            new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.Lax,
+                Path = "/api/v1/auth",
+                Expires = loginResult.RefreshTokenExpiresAtUtc
+            }
+        );
+        
+        return Ok(new LoginResponse(loginResult.AccessToken, loginResult.RefreshTokenExpiresAtUtc));
     }
 }
