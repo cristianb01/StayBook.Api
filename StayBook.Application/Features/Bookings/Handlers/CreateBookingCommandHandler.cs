@@ -11,23 +11,19 @@ public class CreateBookingCommandHandler : IRequestHandler<CreateBookingCommand,
 {
     private readonly IBookingRepository _bookingRepository;
     private readonly IPropertyRepository _propertyRepository;
-    private readonly IMySqlPropertyLock _propertyLock;
 
-    public CreateBookingCommandHandler(IBookingRepository bookingRepository, IMySqlPropertyLock propertyLock, IPropertyRepository propertyRepository)
+    public CreateBookingCommandHandler(IBookingRepository bookingRepository, IPropertyRepository propertyRepository)
     {
         _bookingRepository = bookingRepository;
-        _propertyLock = propertyLock;
         _propertyRepository = propertyRepository;
     }
     
     public async Task<int> Handle(CreateBookingCommand request, CancellationToken cancellationToken)
     {
-        var property = await _propertyRepository.GetByIdAsync(request.PropertyId, cancellationToken);
+        var property = await _propertyRepository.GetByIdForUpdateAsync(request.PropertyId, cancellationToken);
         
         if (property is null)
             throw new ResourceNotFoundException("Specified property not found");
-        
-        await _propertyLock.ExecuteAsync(request.PropertyId, cancellationToken);
 
         var hasOverlap = await _bookingRepository.HasOverlapAsync(request.PropertyId, request.StartDate,
             request.EndDate, cancellationToken);

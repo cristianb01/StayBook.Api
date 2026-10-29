@@ -50,4 +50,29 @@ public class AuthController : ControllerBase
         
         return Ok(new LoginResponse(loginResult.AccessToken, loginResult.RefreshTokenExpiresAtUtc));
     }
+
+    [HttpPost("refresh")]
+    public async Task<ActionResult<LoginResponse>> Refresh(CancellationToken cancellationToken)
+    {
+        if (!Request.Cookies.TryGetValue("refreshToken", out var refreshToken)
+            || string.IsNullOrWhiteSpace(refreshToken))
+        {
+            return Unauthorized();
+        }
+
+        var result = await _mediator.Send(new RefreshTokenCommand(refreshToken), cancellationToken);
+        
+        Response.Cookies.Append("refreshToken",
+            result.RefreshToken,
+            new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.Lax,
+                Path = "api/v1/auth",
+                Expires = result.RefreshTokenExpiresAtUtc
+            });
+
+        return Ok(new LoginResponse(result.AccessToken, result.AccessTokenExpiresAtUtc));
+    }
 }

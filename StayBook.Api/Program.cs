@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using StayBook.Application.Behaviors;
 using StayBook.Application.Features.Bookings.Commands;
 using StayBook.Application.Mappings;
 using StayBook.Extensions;
@@ -21,7 +22,11 @@ builder.Services.AddDbContext<AppDbContext>(options =>
         builder.Configuration.GetConnectionString("DefaultConnection"),
         ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("DefaultConnection"))));
 
-builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(CreateBookingCommand).Assembly));
+builder.Services.AddMediatR(cfg =>
+{
+    cfg.RegisterServicesFromAssembly(typeof(CreateBookingCommand).Assembly);
+    cfg.AddOpenBehavior(typeof(TransactionBehavior<,>));
+});
 
 builder.Services.AddApplicationServices();
 

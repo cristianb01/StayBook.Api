@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using StayBook.Application.Interfaces;
 using StayBook.Domain.Auth;
 
@@ -16,5 +17,19 @@ public class RefreshTokenRepository : IRefreshTokenRepository
     {
         await _appDbContext.RefreshTokens.AddAsync(refreshToken, cancellationToken);
         await _appDbContext.SaveChangesAsync(cancellationToken);
+    }
+
+    public Task<RefreshToken?> GetByHashForUpdateAsync(string tokenHash, CancellationToken cancellationToken)
+    {
+        return _appDbContext.RefreshTokens
+            .FromSqlInterpolated(
+                $"""
+                 SELECT Id, UserId, TokenHash, ExpiresAtUtc, RevokedAtUtc
+                 FROM RefreshTokens
+                 WHERE TokenHash = {tokenHash}
+                 FOR UPDATE
+                 """
+            )
+            .FirstOrDefaultAsync(cancellationToken);
     }
 }

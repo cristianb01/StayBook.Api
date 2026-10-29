@@ -44,6 +44,7 @@ public class ExceptionHandlingMiddleware
             InvalidOperationException => (HttpStatusCode.BadRequest, exception.Message),
             UnauthorizedConversationAccessException => (HttpStatusCode.Forbidden, exception.Message),
             UnauthorizedException => (HttpStatusCode.Unauthorized, exception.Message),
+            UnauthorizedAccessException => (HttpStatusCode.Unauthorized, exception.Message),
             _ => (HttpStatusCode.InternalServerError, "An unexpected error occurred")
         };
         

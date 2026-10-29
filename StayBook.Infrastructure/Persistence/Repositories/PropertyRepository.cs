@@ -29,4 +29,17 @@ public class PropertyRepository : IPropertyRepository
     {
         return _context.Properties.FirstOrDefaultAsync(p => p.Id == requestPropertyId, cancellationToken);
     }
+
+    public Task<Property?> GetByIdForUpdateAsync(int propertyId, CancellationToken cancellationToken)
+    {
+        return _context.Properties
+            .FromSqlInterpolated(
+                $"""
+                 SELECT Id, HostId, Name, Description
+                 FROM Properties
+                 WHERE Id = {propertyId}
+                 FOR UPDATE
+                 """)
+            .FirstOrDefaultAsync(cancellationToken);
+    }
 }

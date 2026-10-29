@@ -22,6 +22,34 @@ namespace StayBook.Infrastructure.Migrations
 
             MySqlModelBuilderExtensions.AutoIncrementColumns(modelBuilder);
 
+            modelBuilder.Entity("StayBook.Domain.Auth.RefreshToken", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("ExpiresAtUtc")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<DateTime?>("RevokedAtUtc")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("TokenHash")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("RefreshTokens");
+                });
+
             modelBuilder.Entity("StayBook.Domain.Bookings.Booking", b =>
                 {
                     b.Property<int>("Id")
@@ -55,6 +83,10 @@ namespace StayBook.Infrastructure.Migrations
                         .HasColumnType("decimal(65,30)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("GuestId");
+
+                    b.HasIndex("HostId");
 
                     b.HasIndex("PropertyId");
 
@@ -264,8 +296,31 @@ namespace StayBook.Infrastructure.Migrations
                     b.ToTable("OutboxMessages");
                 });
 
+            modelBuilder.Entity("StayBook.Domain.Auth.RefreshToken", b =>
+                {
+                    b.HasOne("StayBook.Domain.Users.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("StayBook.Domain.Bookings.Booking", b =>
                 {
+                    b.HasOne("StayBook.Domain.Users.User", "Guest")
+                        .WithMany()
+                        .HasForeignKey("GuestId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("StayBook.Domain.Users.User", "Host")
+                        .WithMany()
+                        .HasForeignKey("HostId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("StayBook.Domain.Properties.Property", "Property")
                         .WithMany()
                         .HasForeignKey("PropertyId")
@@ -295,6 +350,10 @@ namespace StayBook.Infrastructure.Migrations
 
                     b.Navigation("DateRange")
                         .IsRequired();
+
+                    b.Navigation("Guest");
+
+                    b.Navigation("Host");
 
                     b.Navigation("Property");
                 });

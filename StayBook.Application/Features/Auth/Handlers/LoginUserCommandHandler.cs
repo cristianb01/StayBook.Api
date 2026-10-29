@@ -49,7 +49,7 @@ public class LoginUserCommandHandler : IRequestHandler<LoginCommand, LoginResult
             DateTime.UtcNow.AddDays(7)
         );
         
-        await  _refreshTokenRepository.AddAsync(refreshTokenEntity, cancellationToken);
+        await _refreshTokenRepository.AddAsync(refreshTokenEntity, cancellationToken);
         
         return new LoginResult(
             tokenResponse.AccessToken,

@@ -15,10 +15,10 @@ public static class IServiceCollectionExtensions
     {
         services.AddScoped<IBookingRepository, BookingRepository>();
         services.AddScoped<IPropertyRepository, PropertyRepository>();
+        services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IPaymentService, FakePaymentService>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
-        services.AddScoped<IMySqlPropertyLock, MySqlPropertyLock>();
         services.AddScoped<IPasswordHasher, PasswordHasher>();
         services.AddScoped<IJwtProvider, JwtProvider>();
         services.AddScoped<IConversationRepository, ConversationRepository>();

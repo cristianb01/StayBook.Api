@@ -6,4 +6,5 @@ public interface IPropertyRepository
 {
     Task<List<Property>> GetAvailableProperties(DateTime startDate, DateTime endDate, CancellationToken cancellationToken);
     Task<Property?> GetByIdAsync(int requestPropertyId, CancellationToken cancellationToken);
+    Task<Property?> GetByIdForUpdateAsync(int propertyId, CancellationToken cancellationToken);
 }
